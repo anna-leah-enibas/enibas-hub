@@ -147,7 +147,14 @@ input[type=date]:focus{border-color:var(--rose)}
 .bv-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .pillar-card{background:var(--white);border:1px solid var(--shore-pale);padding:16px}
 .pillar-card-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.pillar-dot{width:8px;height:8px;flex-shrink:0}
+.pillar-dot{width:10px;height:10px;flex-shrink:0;border-radius:50%;position:relative;overflow:hidden;cursor:pointer}
+.colour-picker{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;padding:0;border:none}
+.card-del{position:absolute;top:8px;right:10px;background:none;border:none;font-size:16px;color:var(--shore);cursor:pointer;opacity:0;transition:opacity .15s;line-height:1;padding:0}
+.pillar-card:hover .card-del{opacity:1}
+.card-del:hover{color:var(--rose)}
+.pillar-card{position:relative}
+.pillar-name-input{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--slate);font-weight:500;border:none;background:none;outline:none;font-family:var(--fb);width:100%;cursor:text}
+.pillar-name-input:focus{border-bottom:1px solid var(--shore-pale)}
 .pillar-name{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--slate);font-weight:500}
 .pillar-card textarea{border:none;background:none;padding:0;font-size:13px;color:var(--clay);font-weight:300;line-height:1.7;resize:none;outline:none;width:100%;min-height:80px}
 .bv-save{padding:11px 28px;background:var(--slate);color:var(--white);border:none;font-size:10px;letter-spacing:3px;text-transform:uppercase;font-weight:400;cursor:pointer;transition:background .2s}
@@ -462,73 +469,17 @@ Behind the scenes | bts</textarea>
     </div>
 
     <div class="bv-section">
-      <div class="bv-sec-h">Content Pillars</div>
-      <div class="bv-grid">
-        <div class="pillar-card">
-          <div class="pillar-card-top">
-            <div class="pillar-dot" style="background:#7A9898"></div>
-            <span class="pillar-name">Heritage</span>
-          </div>
-          <textarea id="pil-heritage">Open with the Irish language, the land, West Cork light, or a quiet Irish moment. Let the jewellery arrive as a natural expression of that feeling. Never force the Irish angle.</textarea>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-card-top">
-            <div class="pillar-dot" style="background:#AF7281"></div>
-            <span class="pillar-name">Gratitude</span>
-          </div>
-          <textarea id="pil-gratitude">Open with the feeling of wanting to show someone how much they mean. Jewellery says what words cannot. Warm and specific, never generic.</textarea>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-card-top">
-            <div class="pillar-dot" style="background:#C09E86"></div>
-            <span class="pillar-name">Family</span>
-          </div>
-          <textarea id="pil-family">Open with a bond between grandmother and granddaughter, mother and daughter. A piece that carries memory across generations. Warm without being sentimental.</textarea>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-card-top">
-            <div class="pillar-dot" style="background:#8FA68E"></div>
-            <span class="pillar-name">Milestones</span>
-          </div>
-          <textarea id="pil-milestones">Open with the quiet pride of marking how far you have come. Self-gifting as self-recognition. Never self-help in tone -- always grounded and real.</textarea>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-card-top">
-            <div class="pillar-dot" style="background:#C6BBAF"></div>
-            <span class="pillar-name">Craftsmanship</span>
-          </div>
-          <textarea id="pil-craft">First person as Sabine. Warm and proud of the handmade process, West Cork workshop, the story from Schull market. End with a genuine question. Skip hashtags for BTS posts.</textarea>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-card-top">
-            <div class="pillar-dot" style="background:#323130"></div>
-            <span class="pillar-name">Resilience</span>
-          </div>
-          <textarea id="pil-resilience">Quiet Irish strength -- compassionate and real, never pity. The jewellery as a badge of something survived or overcome. Always led by the human experience.</textarea>
-        </div>
+      <div class="bv-sec-h" style="display:flex;align-items:center;justify-content:space-between">Content Pillars
+        <button onclick="addPillar()" class="abtn" style="text-transform:uppercase;letter-spacing:2px;font-size:9px;padding:5px 12px">+ Add Pillar</button>
       </div>
+      <div class="bv-grid" id="pillar-cards"><!-- dynamic --></div>
     </div>
 
     <div class="bv-section">
-      <div class="bv-sec-h">Personas</div>
-      <div class="bv-grid">
-        <div class="pillar-card">
-          <div class="pillar-card-top"><span class="pillar-name">Self Gifter</span></div>
-          <textarea id="per-self">A woman who marks her own milestones with enibas. Values quality over quantity. Buys for herself without guilt.</textarea>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-card-top"><span class="pillar-name">Family Lover</span></div>
-          <textarea id="per-fam">A woman who keeps her family close through jewellery. Values pieces that carry meaning and can be passed down.</textarea>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-card-top"><span class="pillar-name">Occasion Giver</span></div>
-          <textarea id="per-occ">Someone choosing a meaningful gift, often with an Irish inscription. Wants something personal, not generic.</textarea>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-card-top"><span class="pillar-name">Ireland Lover</span></div>
-          <textarea id="per-ire">Someone deeply connected to Irish heritage. The Irish language, landscape and spirit resonate deeply.</textarea>
-        </div>
+      <div class="bv-sec-h" style="display:flex;align-items:center;justify-content:space-between">Personas
+        <button onclick="addPersona()" class="abtn" style="text-transform:uppercase;letter-spacing:2px;font-size:9px;padding:5px 12px">+ Add Persona</button>
       </div>
+      <div class="bv-grid" id="persona-cards"><!-- dynamic --></div>
     </div>
 
     <div class="bv-section">
@@ -734,96 +685,180 @@ function clearImg() {
 }
 
 // ── BRAND VOICE ───────────────────────────────────────────────────────
-var DEFAULT_BV = {
-  voice: document.getElementById('bv-voice') ? document.getElementById('bv-voice').value : '',
-  avoid: '',extra: '',social: '',nl: '',
-  pillars: {heritage:'',gratitude:'',family:'',milestones:'',craft:'',resilience:''},
-  personas: {self:'',fam:'',occ:'',ire:''}
-};
+var DEFAULT_PILLARS = [
+  {key:'heritage',  name:'Heritage',      colour:'#7A9898', desc:'Open with the Irish language, the land, West Cork light, or a quiet Irish moment. Let the jewellery arrive as a natural expression of that feeling. Never force the Irish angle.'},
+  {key:'gratitude', name:'Gratitude',     colour:'#AF7281', desc:'Open with the feeling of wanting to show someone how much they mean. Jewellery says what words cannot. Warm and specific, never generic.'},
+  {key:'family',    name:'Family',        colour:'#C09E86', desc:'Open with a bond between grandmother and granddaughter, mother and daughter. A piece that carries memory across generations. Warm without being sentimental.'},
+  {key:'milestones',name:'Milestones',    colour:'#8FA68E', desc:'Open with the quiet pride of marking how far you have come. Self-gifting as self-recognition. Never self-help in tone.'},
+  {key:'craft',     name:'Craftsmanship', colour:'#9E8E82', desc:'First person as Sabine. Warm and proud of the handmade process, West Cork workshop. End with a genuine question. Skip hashtags for BTS posts.'},
+  {key:'resilience',name:'Resilience',    colour:'#6B6B6B', desc:'Quiet Irish strength - compassionate and real, never pity. The jewellery as a badge of something survived. Always led by the human experience.'}
+];
+var DEFAULT_PERSONAS = [
+  {key:'self', name:'Self Gifter',    desc:'A woman who marks her own milestones with enibas. Values quality over quantity. Buys for herself without guilt.'},
+  {key:'fam',  name:'Family Lover',   desc:'A woman who keeps her family close through jewellery. Values pieces that carry meaning and can be passed down.'},
+  {key:'occ',  name:'Occasion Giver', desc:'Someone choosing a meaningful gift, often with an Irish inscription. Wants something personal, not generic.'},
+  {key:'ire',  name:'Ireland Lover',  desc:'Someone deeply connected to Irish heritage. The Irish language, landscape and spirit resonate deeply.'}
+];
+
+function ea(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
+function et(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function getBV() {
-  try {
-    var saved = JSON.parse(localStorage.getItem('enibas_bv') || 'null');
-    if (saved) return saved;
-  } catch(e) {}
+  try { var s=JSON.parse(localStorage.getItem('enibas_bv')||'null'); if(s) return s; } catch(e){}
   return {
     voice: document.getElementById('bv-voice').value,
     avoid: document.getElementById('bv-avoid').value,
     extra: document.getElementById('bv-extra').value,
     social: document.getElementById('bv-social-rules').value,
     nl: document.getElementById('bv-nl-rules').value,
-    pillars: {
-      heritage: document.getElementById('pil-heritage').value,
-      gratitude: document.getElementById('pil-gratitude').value,
-      family: document.getElementById('pil-family').value,
-      milestones: document.getElementById('pil-milestones').value,
-      craft: document.getElementById('pil-craft').value,
-      resilience: document.getElementById('pil-resilience').value
-    },
-    personas: {
-      self: document.getElementById('per-self').value,
-      fam: document.getElementById('per-fam').value,
-      occ: document.getElementById('per-occ').value,
-      ire: document.getElementById('per-ire').value
-    }
+    types: document.getElementById('bv-types').value,
+    pillars: DEFAULT_PILLARS,
+    personas: DEFAULT_PERSONAS
   };
+}
+
+function mutateBV(fn) {
+  var bv = getBV();
+  fn(bv);
+  localStorage.setItem('enibas_bv', JSON.stringify(bv));
+}
+
+// ── Render pillar cards in Brand Voice ────────────────────────────────
+function renderPillarCards() {
+  var bv = getBV();
+  var pillars = Array.isArray(bv.pillars) ? bv.pillars : DEFAULT_PILLARS;
+  var g = document.getElementById('pillar-cards'); if(!g) return;
+  g.innerHTML = '';
+  pillars.forEach(function(p, i) {
+    var d = document.createElement('div');
+    d.className = 'pillar-card';
+    d.innerHTML =
+      '<button class="card-del" onclick="delPillar('+i+')" title="Remove">&#215;</button>'+
+      '<div class="pillar-card-top">'+
+        '<div class="pillar-dot" style="background:'+ea(p.colour)+'">'+
+          '<input type="color" class="colour-picker" value="'+ea(p.colour)+'" title="Change colour" oninput="setPillarColour('+i+',this.value)">'+
+        '</div>'+
+        '<input class="pillar-name-input" type="text" value="'+ea(p.name)+'" placeholder="Pillar name" onblur="setPillarName('+i+',this.value)">'+
+      '</div>'+
+      '<textarea placeholder="Describe the angle and tone..." onblur="setPillarDesc('+i+',this.value)">'+et(p.desc)+'</textarea>';
+    g.appendChild(d);
+  });
+}
+
+// ── Render persona cards in Brand Voice ──────────────────────────────
+function renderPersonaCards() {
+  var bv = getBV();
+  var personas = Array.isArray(bv.personas) ? bv.personas : DEFAULT_PERSONAS;
+  var g = document.getElementById('persona-cards'); if(!g) return;
+  g.innerHTML = '';
+  personas.forEach(function(p, i) {
+    var d = document.createElement('div');
+    d.className = 'pillar-card';
+    d.innerHTML =
+      '<button class="card-del" onclick="delPersona('+i+')" title="Remove">&#215;</button>'+
+      '<div class="pillar-card-top">'+
+        '<input class="pillar-name-input" type="text" value="'+ea(p.name)+'" placeholder="Persona name" onblur="setPersonaName('+i+',this.value)">'+
+      '</div>'+
+      '<textarea placeholder="Describe this persona..." onblur="setPersonaDesc('+i+',this.value)">'+et(p.desc)+'</textarea>';
+    g.appendChild(d);
+  });
+}
+
+// ── Pillar mutation helpers ───────────────────────────────────────────
+function setPillarName(i,v)  { mutateBV(function(bv){bv.pillars[i].name=v; bv.pillars[i].key=v.toLowerCase().replace(/\s+/g,'-');}); renderPillarPills(); }
+function setPillarDesc(i,v)  { mutateBV(function(bv){bv.pillars[i].desc=v;}); }
+function setPillarColour(i,v){ mutateBV(function(bv){bv.pillars[i].colour=v;}); renderPillarCards(); renderPillarPills(); }
+function delPillar(i)        { if(!confirm('Remove this pillar?')) return; mutateBV(function(bv){bv.pillars.splice(i,1);}); renderPillarCards(); renderPillarPills(); }
+function addPillar()         { mutateBV(function(bv){ if(!Array.isArray(bv.pillars)) bv.pillars=DEFAULT_PILLARS.slice(); bv.pillars.push({key:'pillar-'+Date.now(),name:'New Pillar',colour:'#C6BBAF',desc:''});}); renderPillarCards(); renderPillarPills(); setTimeout(function(){var g=document.getElementById('pillar-cards');if(g&&g.lastChild)g.lastChild.querySelector('.pillar-name-input').focus();},80); }
+
+// ── Persona mutation helpers ──────────────────────────────────────────
+function setPersonaName(i,v) { mutateBV(function(bv){bv.personas[i].name=v; bv.personas[i].key=v.toLowerCase().replace(/\s+/g,'-');}); renderPersonaPills(); }
+function setPersonaDesc(i,v) { mutateBV(function(bv){bv.personas[i].desc=v;}); }
+function delPersona(i)       { if(!confirm('Remove this persona?')) return; mutateBV(function(bv){bv.personas.splice(i,1);}); renderPersonaCards(); renderPersonaPills(); }
+function addPersona()        { mutateBV(function(bv){ if(!Array.isArray(bv.personas)) bv.personas=DEFAULT_PERSONAS.slice(); bv.personas.push({key:'persona-'+Date.now(),name:'New Persona',desc:''});}); renderPersonaCards(); renderPersonaPills(); setTimeout(function(){var g=document.getElementById('persona-cards');if(g&&g.lastChild)g.lastChild.querySelector('.pillar-name-input').focus();},80); }
+
+// ── Render pillar pills in Generator ────────────────────────────────
+function renderPillarPills() {
+  var bv = getBV();
+  var pillars = Array.isArray(bv.pillars) ? bv.pillars : DEFAULT_PILLARS;
+  var sg = document.getElementById('pil-sg'); if(!sg) return;
+  sg.innerHTML = '';
+  pillars.forEach(function(p, i) {
+    var btn = document.createElement('button');
+    btn.className = 'pill' + (i===0?' on':'');
+    btn.textContent = p.name;
+    var col = p.colour || '#7A9898';
+    if(i===0){ btn.style.background=col; btn.style.borderColor=col; btn.style.color='#fff'; cPil=p.key; }
+    (function(pillar){ btn.onclick = function(){
+      document.querySelectorAll('#pil-sg .pill').forEach(function(b){ b.classList.remove('on'); b.style.background=''; b.style.borderColor=''; b.style.color=''; });
+      this.classList.add('on'); this.style.background=pillar.colour; this.style.borderColor=pillar.colour; this.style.color='#fff';
+      cPil = pillar.key;
+    };})(p);
+    sg.appendChild(btn);
+  });
+}
+
+// ── Render persona pills in Generator ───────────────────────────────
+function renderPersonaPills() {
+  var bv = getBV();
+  var personas = Array.isArray(bv.personas) ? bv.personas : DEFAULT_PERSONAS;
+  var sg = document.getElementById('per-sg'); if(!sg) return;
+  sg.innerHTML = '';
+  var allBtn = document.createElement('button');
+  allBtn.className='pill on'; allBtn.textContent='All personas';
+  allBtn.onclick=function(){ document.querySelectorAll('#per-sg .pill').forEach(function(b){b.classList.remove('on');}); this.classList.add('on'); cPer='all'; };
+  cPer='all';
+  sg.appendChild(allBtn);
+  personas.forEach(function(p){
+    var btn=document.createElement('button'); btn.className='pill'; btn.textContent=p.name;
+    (function(persona){ btn.onclick=function(){ document.querySelectorAll('#per-sg .pill').forEach(function(b){b.classList.remove('on');}); this.classList.add('on'); cPer=persona.key; }; })(p);
+    sg.appendChild(btn);
+  });
 }
 
 function loadBVToUI() {
   try {
-    var saved = JSON.parse(localStorage.getItem('enibas_bv') || 'null');
-    if (!saved) { renderTypeButtons(); return; }
-    if (saved.voice) document.getElementById('bv-voice').value = saved.voice;
-    if (saved.avoid) document.getElementById('bv-avoid').value = saved.avoid;
-    if (saved.extra) document.getElementById('bv-extra').value = saved.extra;
-    if (saved.social) document.getElementById('bv-social-rules').value = saved.social;
-    if (saved.nl) document.getElementById('bv-nl-rules').value = saved.nl;
-    if (saved.types) document.getElementById('bv-types').value = saved.types;
-    if (saved.pillars) {
-      Object.keys(saved.pillars).forEach(function(k) {
-        var el = document.getElementById('pil-' + k);
-        if (el && saved.pillars[k]) el.value = saved.pillars[k];
-      });
+    var saved = JSON.parse(localStorage.getItem('enibas_bv')||'null');
+    if(saved) {
+      if(saved.voice)  document.getElementById('bv-voice').value = saved.voice;
+      if(saved.avoid)  document.getElementById('bv-avoid').value = saved.avoid;
+      if(saved.extra)  document.getElementById('bv-extra').value = saved.extra;
+      if(saved.social) document.getElementById('bv-social-rules').value = saved.social;
+      if(saved.nl)     document.getElementById('bv-nl-rules').value = saved.nl;
+      if(saved.types)  document.getElementById('bv-types').value = saved.types;
     }
-    if (saved.personas) {
-      Object.keys(saved.personas).forEach(function(k) {
-        var el = document.getElementById('per-' + k);
-        if (el && saved.personas[k]) el.value = saved.personas[k];
-      });
-    }
-  } catch(e) {}
+  } catch(e){}
+  renderPillarCards(); renderPersonaCards();
+  renderPillarPills(); renderPersonaPills(); renderTypeButtons();
 }
 
 function saveBrandVoice() {
-  var bv = {
-    voice: document.getElementById('bv-voice').value,
-    avoid: document.getElementById('bv-avoid').value,
-    extra: document.getElementById('bv-extra').value,
-    social: document.getElementById('bv-social-rules').value,
-    nl: document.getElementById('bv-nl-rules').value,
-    types: document.getElementById('bv-types').value,
-    pillars: {
-      heritage: document.getElementById('pil-heritage').value,
-      gratitude: document.getElementById('pil-gratitude').value,
-      family: document.getElementById('pil-family').value,
-      milestones: document.getElementById('pil-milestones').value,
-      craft: document.getElementById('pil-craft').value,
-      resilience: document.getElementById('pil-resilience').value
-    },
-    personas: {
-      self: document.getElementById('per-self').value,
-      fam: document.getElementById('per-fam').value,
-      occ: document.getElementById('per-occ').value,
-      ire: document.getElementById('per-ire').value
-    }
-  };
-  try {
-    localStorage.setItem('enibas_bv', JSON.stringify(bv));
-    renderTypeButtons();
-    var s = document.getElementById('bv-saved');
-    s.style.display = 'inline';
-    setTimeout(function() { s.style.display = 'none'; }, 2500);
-  } catch(e) { alert('Could not save.'); }
+  var bv = getBV();
+  bv.voice  = document.getElementById('bv-voice').value;
+  bv.avoid  = document.getElementById('bv-avoid').value;
+  bv.extra  = document.getElementById('bv-extra').value;
+  bv.social = document.getElementById('bv-social-rules').value;
+  bv.nl     = document.getElementById('bv-nl-rules').value;
+  bv.types  = document.getElementById('bv-types').value;
+  // Flush any unsaved textarea changes from pillar/persona cards
+  document.querySelectorAll('#pillar-cards .pillar-card').forEach(function(card,i){
+    if(!bv.pillars||!bv.pillars[i]) return;
+    var n=card.querySelector('.pillar-name-input'), t=card.querySelector('textarea'), c=card.querySelector('.colour-picker');
+    if(n) { bv.pillars[i].name=n.value; bv.pillars[i].key=n.value.toLowerCase().replace(/\s+/g,'-'); }
+    if(t) bv.pillars[i].desc=t.value;
+    if(c) bv.pillars[i].colour=c.value;
+  });
+  document.querySelectorAll('#persona-cards .pillar-card').forEach(function(card,i){
+    if(!bv.personas||!bv.personas[i]) return;
+    var n=card.querySelector('.pillar-name-input'), t=card.querySelector('textarea');
+    if(n) { bv.personas[i].name=n.value; bv.personas[i].key=n.value.toLowerCase().replace(/\s+/g,'-'); }
+    if(t) bv.personas[i].desc=t.value;
+  });
+  localStorage.setItem('enibas_bv', JSON.stringify(bv));
+  renderPillarCards(); renderPersonaCards();
+  renderPillarPills(); renderPersonaPills(); renderTypeButtons();
+  var s=document.getElementById('bv-saved'); s.style.display='inline';
+  setTimeout(function(){s.style.display='none';},2500);
 }
 
 // ── AI CALL ───────────────────────────────────────────────────────────
@@ -848,34 +883,42 @@ async function aiCall(prompt, withImg) {
 }
 
 // ── BUILD PROMPTS ─────────────────────────────────────────────────────
-var TYPE_HINT = {
-  product: 'This is a product showcase post.',
-  story: 'This is a customer story post. Lead with the human experience, not the product.',
-  bts: 'This is a behind-the-scenes post. Write first person as Sabine. Warm and personal. End with a genuine question.'
-};
-var PER_HINT = {
-  all: '',
-  self: 'Persona: a woman who marks her own milestones with enibas.',
-  fam: 'Persona: a woman who keeps her family close through jewellery.',
-  occ: 'Persona: someone choosing a meaningful gift with an Irish inscription.',
-  ire: 'Persona: someone deeply connected to Irish heritage and the spirit of Ireland.'
-};
-
 function buildPrompts(prod, det) {
   var bv = getBV();
-  var pillarDesc = (bv.pillars && bv.pillars[cPil]) || '';
-  var perDesc = (bv.personas && bv.personas[cPer]) ? 'Persona: ' + bv.personas[cPer] : (PER_HINT[cPer] || '');
-  var base = 'You are a copywriter for enibas jewellery, a contemporary Irish jewellery brand handmade in West Cork by founder Sabine.\n\n'
-    + 'BRAND VOICE:\n' + (bv.voice || '') + '\n\n'
-    + 'PILLAR -- ' + cPil.toUpperCase() + ':\n' + pillarDesc + '\n\n'
-    + (perDesc ? perDesc + '\n\n' : '')
-    + 'TOPIC: ' + prod + (det ? '\nDETAILS: ' + det : '') + '\n\n'
-    + TYPE_HINT[cType] + '\n\n'
-    + (bv.avoid ? 'NEVER USE: ' + bv.avoid + '\n\n' : '')
-    + (bv.extra ? 'ADDITIONAL RULES: ' + bv.extra + '\n\n' : '');
+  var pillars  = Array.isArray(bv.pillars)  ? bv.pillars  : DEFAULT_PILLARS;
+  var personas = Array.isArray(bv.personas) ? bv.personas : DEFAULT_PERSONAS;
 
-  var socialP = base + 'SOCIAL POST RULES:\n' + (bv.social || '') + '\n\nWrite the Instagram caption now:';
-  var nlP = base + 'NEWSLETTER RULES:\n' + (bv.nl || '') + '\n\nUse these exact labels on their own lines:\nSUBJECT LINE:\nPREVIEW TEXT:\nOPENING:\nMAIN BODY:\nCTA BUTTON:\n\nWrite the newsletter now:';
+  // Find selected pillar object
+  var pillarObj = pillars[0];
+  pillars.forEach(function(p){ if(p.key===cPil) pillarObj=p; });
+
+  // Find selected persona object (null = all)
+  var personaObj = null;
+  if(cPer !== 'all') personas.forEach(function(p){ if(p.key===cPer) personaObj=p; });
+
+  // Content type hint from bv-types
+  var typeHint = '';
+  var rawTypes = (bv.types||'').split('\n');
+  rawTypes.forEach(function(line){
+    var parts = line.split('|').map(function(x){return x.trim();});
+    var key = parts[1] || parts[0].toLowerCase().replace(/\s+/g,'-');
+    if(key===cType) typeHint = 'This is a ' + parts[0] + ' post.';
+  });
+  if(!typeHint) typeHint = 'This is a ' + cType + ' post.';
+  if(cType==='bts') typeHint += ' Write first person as Sabine. Warm and personal. End with a genuine question.';
+
+  var base =
+    'You are a copywriter for enibas jewellery, a contemporary Irish jewellery brand handmade in West Cork by founder Sabine.\n\n' +
+    'BRAND VOICE:\n' + (bv.voice||'') + '\n\n' +
+    (pillarObj ? 'CONTENT PILLAR -- ' + pillarObj.name.toUpperCase() + ':\n' + (pillarObj.desc||'') + '\n\n' : '') +
+    (personaObj ? 'PERSONA -- ' + personaObj.name.toUpperCase() + ':\n' + (personaObj.desc||'') + '\n\n' : 'PERSONA: Write for all audiences.\n\n') +
+    'TOPIC: ' + prod + (det ? '\nDETAILS: ' + det : '') + '\n\n' +
+    typeHint + '\n\n' +
+    (bv.avoid ? 'NEVER USE THESE WORDS OR PHRASES: ' + bv.avoid + '\n\n' : '') +
+    (bv.extra ? 'ADDITIONAL RULES: ' + bv.extra + '\n\n' : '');
+
+  var socialP = base + 'SOCIAL POST RULES:\n' + (bv.social||'') + '\n\nWrite the Instagram caption now:';
+  var nlP     = base + 'NEWSLETTER RULES:\n'  + (bv.nl||'')    + '\n\nUse these exact labels on their own lines:\nSUBJECT LINE:\nPREVIEW TEXT:\nOPENING:\nMAIN BODY:\nCTA BUTTON:\n\nWrite the newsletter now:';
   return {social: socialP, nl: nlP};
 }
 
@@ -1217,10 +1260,8 @@ function submitKey() {
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────
-loadBVToUI();
-renderTypeButtons();
+loadBVToUI(); // renders all cards and pills
 initChecklist();
-// Set initial output mode
 sOut(document.getElementById('out-mode-s'), 'social');
 </script>
 </body>
