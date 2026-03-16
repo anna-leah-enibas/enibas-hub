@@ -969,11 +969,10 @@ input[type=date]:focus { border-color: var(--rose); }
       <!-- Word card -->
       <div style="background:var(--ink);padding:48px 40px;margin-bottom:20px;text-align:center;position:relative">
         <div style="font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--mist);margin-bottom:20px" id="iw-month-label"></div>
-        <div style="font-family:var(--fh);font-size:72px;font-weight:300;color:var(--white);line-height:1;margin-bottom:8px" id="iw-word"></div>
-        <div style="font-size:11px;letter-spacing:2px;color:#5a5750;margin-bottom:14px;font-weight:300" id="iw-pronunciation"></div>
-        <div style="font-family:var(--fh);font-size:26px;font-weight:300;font-style:italic;color:var(--rose-l);margin-bottom:24px" id="iw-translation"></div>
-        <div style="width:40px;height:1px;background:var(--mist);opacity:.2;margin:0 auto 24px"></div>
-        <div style="font-size:14px;color:var(--mist);line-height:1.85;max-width:520px;margin:0 auto;font-weight:300" id="iw-definition"></div>
+        <div style="font-family:var(--fh);font-size:72px;font-weight:300;color:var(--white);line-height:1;margin-bottom:10px" id="iw-word"></div>
+        <div style="font-size:12px;color:#5a5750;margin-bottom:6px;font-weight:300;letter-spacing:.5px" id="iw-pos-pronun"></div>
+        <div style="width:40px;height:1px;background:var(--mist);opacity:.2;margin:0 auto 20px"></div>
+        <div style="font-size:14px;color:var(--mist);line-height:1.85;max-width:520px;margin:0 auto;font-weight:300" id="iw-definition"><span id="iw-translation" style="font-weight:500"></span><span id="iw-def-sep" style="color:#4a4744"> — </span><span id="iw-def-text"></span></div>
       </div>
 
       <!-- Generating full content spinner -->
@@ -1735,11 +1734,11 @@ async function genIrishWords(){
     '— Each word should be distinct in meaning and feel — give real variety\n\n'+
     'Respond ONLY with this exact JSON — no preamble, no markdown:\n'+
     '{"words":['+
-    '{"word":"Irish word","translation":"1–4 words","pronunciation":"phonetic e.g. (MWEE-an)","definition":"max 120 chars: Core meaning; one sentence of depth."},'+
-    '{"word":"Irish word","translation":"1–4 words","pronunciation":"phonetic","definition":"max 120 chars"},'+
-    '{"word":"Irish word","translation":"1–4 words","pronunciation":"phonetic","definition":"max 120 chars"},'+
-    '{"word":"Irish word","translation":"1–4 words","pronunciation":"phonetic","definition":"max 120 chars"},'+
-    '{"word":"Irish word","translation":"1–4 words","pronunciation":"phonetic","definition":"max 120 chars"}'+
+    '{"word":"Irish word","partOfSpeech":"noun or verb or adjective etc","pronunciation":"phonetic e.g. mish-nock — no brackets","translation":"1–4 words","definition":"One sentence max 160 chars. Format exactly like this example — Courage; The quiet yet powerful strength of heart and spirit that empowers one to remain resilient and hopeful, even in the face of life\'s greatest challenges."},'+
+    '{"word":"Irish word","partOfSpeech":"noun","pronunciation":"phonetic","translation":"1–4 words","definition":"One sentence, same format"},'+
+    '{"word":"Irish word","partOfSpeech":"noun","pronunciation":"phonetic","translation":"1–4 words","definition":"One sentence, same format"},'+
+    '{"word":"Irish word","partOfSpeech":"noun","pronunciation":"phonetic","translation":"1–4 words","definition":"One sentence, same format"},'+
+    '{"word":"Irish word","partOfSpeech":"noun","pronunciation":"phonetic","translation":"1–4 words","definition":"One sentence, same format"}'+
     ']}';
 
   try{
@@ -1764,12 +1763,11 @@ function renderWordOptions(words, monthName){
     card.onmouseout=function(){this.style.borderColor='var(--shore)';};
     card.innerHTML=
       '<div style="flex:1">'+
-        '<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px">'+
-          '<span style="font-family:var(--fh);font-size:28px;font-weight:300;color:var(--ink)">'+et(w.word)+'</span>'+
-          '<span style="font-size:11px;color:var(--mist);font-weight:300">'+et(w.pronunciation)+'</span>'+
-          '<span style="font-family:var(--fh);font-size:16px;font-style:italic;color:var(--rose-l)">'+et(w.translation)+'</span>'+
-        '</div>'+
-        '<div style="font-size:13px;color:var(--stone);line-height:1.7;font-weight:300">'+et(w.definition)+'</div>'+
+        '<div style="font-family:var(--fh);font-size:26px;font-weight:300;color:var(--ink);margin-bottom:3px">'+et(w.word)+'</div>'+
+        '<div style="font-size:11px;color:var(--mist);font-weight:300;margin-bottom:8px;letter-spacing:.5px">'+et(w.partOfSpeech||'noun')+' &nbsp;—&nbsp; '+et(w.pronunciation)+'</div>'+
+        '<div style="font-size:13px;color:var(--stone);line-height:1.75;font-weight:300"><span style="font-weight:500;color:var(--ink)">'+et(w.translation)+'</span><span style="color:var(--mist)"> — </span>'+et(w.definition)+'</div>'+
+      '</div>'+
+      '<button class="btn-rose" style="flex-shrink:0;padding:10px 20px;font-size:9px">Choose</button>';
       '</div>'+
       '<button class="btn-rose" style="flex-shrink:0;padding:10px 20px;font-size:9px">Choose this word</button>';
     (function(word, month){ card.onclick=function(){ selectWord(word, month); }; })(w, monthName);
@@ -1821,10 +1819,13 @@ async function selectWord(wordData, monthName){
 }
 
 function renderIwCard(data){
-  document.getElementById('iw-word').textContent=data.word||'';
-  document.getElementById('iw-pronunciation').textContent=data.pronunciation||'';
-  document.getElementById('iw-translation').textContent=data.translation||'';
-  document.getElementById('iw-definition').textContent=data.definition||'';
+  document.getElementById('iw-word').textContent = data.word||'';
+  var posPronun = document.getElementById('iw-pos-pronun');
+  if(posPronun) posPronun.textContent = (data.partOfSpeech||'noun') + '  —  ' + (data.pronunciation||'');
+  var transEl = document.getElementById('iw-translation');
+  if(transEl) transEl.textContent = data.translation||'';
+  var defText = document.getElementById('iw-def-text');
+  if(defText) defText.textContent = data.definition||'';
 }
 
 function cpIwCaption(){
