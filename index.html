@@ -921,7 +921,7 @@ input[type=date]:focus { border-color: var(--rose); }
 
     <div class="page-hdr">
       <h2>Irish Word <em>of the Month</em></h2>
-      <p>Generate a verified Irish word for Sabine each month — with an accurate definition, seasonal resonance, a draft social caption, and a newsletter ready to drop into Klaviyo.</p>
+      <p>Generate 5 verified Irish words for the month. Pick the one that feels right, then get the full content — definition, caption, and newsletter — ready for Sabine.</p>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr 160px;gap:20px;margin-bottom:28px;align-items:flex-end">
@@ -940,7 +940,7 @@ input[type=date]:focus { border-color: var(--rose); }
         <label class="lbl">Theme or feeling <span style="font-weight:300;letter-spacing:0;text-transform:none;font-size:11px">(optional)</span></label>
         <input type="text" id="iw-theme" placeholder="e.g. gratitude, resilience, new beginnings…">
       </div>
-      <button class="btn-rose" id="iw-btn" onclick="genIrishWord()" style="height:44px">Generate</button>
+      <button class="btn-rose" id="iw-btn" onclick="genIrishWords()" style="height:44px">Generate</button>
     </div>
 
     <div style="margin-bottom:28px">
@@ -952,7 +952,19 @@ input[type=date]:focus { border-color: var(--rose); }
       </div>
     </div>
 
+    <!-- Step 1: word options -->
+    <div id="iw-options" style="display:none">
+      <div class="lbl" style="margin-bottom:16px">Choose a word for this month</div>
+      <div id="iw-options-grid" style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px"></div>
+    </div>
+
+    <!-- Step 2: full content for chosen word -->
     <div id="iw-result" style="display:none">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <button class="btn-ghost sm" onclick="backToOptions()">&#8592; Choose a different word</button>
+        <button class="btn-ghost sm" onclick="saveUsedWord()">Mark as used this month</button>
+      </div>
 
       <!-- Word card -->
       <div style="background:var(--ink);padding:48px 40px;margin-bottom:20px;text-align:center;position:relative">
@@ -962,47 +974,44 @@ input[type=date]:focus { border-color: var(--rose); }
         <div style="font-family:var(--fh);font-size:26px;font-weight:300;font-style:italic;color:var(--rose-l);margin-bottom:24px" id="iw-translation"></div>
         <div style="width:40px;height:1px;background:var(--mist);opacity:.2;margin:0 auto 24px"></div>
         <div style="font-size:14px;color:var(--mist);line-height:1.85;max-width:520px;margin:0 auto;font-weight:300" id="iw-definition"></div>
-        <div style="margin-top:16px;font-size:11px;color:#4a4744;font-style:italic" id="iw-char-count"></div>
       </div>
 
-      <!-- Seasonal + enibas connection -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-        <div style="background:var(--white);border:1px solid var(--shore);padding:22px">
-          <div class="lbl" style="color:var(--teal);margin-bottom:10px">Seasonal resonance</div>
-          <div style="font-size:13px;line-height:1.85;color:var(--stone);font-weight:300" id="iw-seasonal"></div>
-        </div>
-        <div style="background:var(--white);border:1px solid var(--shore);padding:22px">
-          <div class="lbl" style="color:var(--rose);margin-bottom:10px">Connection to enibas</div>
-          <div style="font-size:13px;line-height:1.85;color:var(--stone);font-weight:300" id="iw-brand"></div>
+      <!-- Generating full content spinner -->
+      <div id="iw-content-spin" style="display:none">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:40px 0">
+          <div class="spin"></div>
+          <p style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--mist)">Writing content…</p>
         </div>
       </div>
 
       <!-- Social caption -->
-      <div style="background:var(--white);border:1px solid var(--shore);margin-bottom:14px">
-        <div style="padding:12px 20px;border-bottom:1px solid var(--shore);display:flex;align-items:center;justify-content:space-between">
-          <span class="lbl" style="margin:0">Instagram caption</span>
-          <button class="btn-ghost sm" onclick="cpIwCaption()">Copy caption</button>
+      <div id="iw-content-wrap" style="display:none">
+        <div style="background:var(--white);border:1px solid var(--shore);margin-bottom:14px">
+          <div style="padding:12px 20px;border-bottom:1px solid var(--shore);display:flex;align-items:center;justify-content:space-between">
+            <span class="lbl" style="margin:0">Instagram caption</span>
+            <button class="btn-ghost sm" onclick="cpIwCaption()">Copy caption</button>
+          </div>
+          <div style="padding:22px 24px;font-size:14px;line-height:2;color:var(--ink);white-space:pre-wrap;font-weight:300" id="iw-caption"></div>
         </div>
-        <div style="padding:22px 24px;font-size:14px;line-height:2;color:var(--ink);white-space:pre-wrap;font-weight:300" id="iw-caption"></div>
-      </div>
 
-      <!-- Newsletter -->
-      <div style="background:var(--white);border:1px solid var(--shore);margin-bottom:20px">
-        <div style="padding:12px 20px;border-bottom:1px solid var(--shore);display:flex;align-items:center;justify-content:space-between">
-          <span class="lbl" style="margin:0">Newsletter draft — paste into Klaviyo</span>
-          <button class="btn-ghost sm" onclick="cpIwNewsletter()">Copy newsletter</button>
+        <!-- Newsletter -->
+        <div style="background:var(--white);border:1px solid var(--shore);margin-bottom:20px">
+          <div style="padding:12px 20px;border-bottom:1px solid var(--shore);display:flex;align-items:center;justify-content:space-between">
+            <span class="lbl" style="margin:0">Newsletter — paste into Klaviyo</span>
+            <button class="btn-ghost sm" onclick="cpIwNewsletter()">Copy newsletter</button>
+          </div>
+          <div style="padding:22px 24px;font-size:14px;line-height:2;color:var(--ink);white-space:pre-wrap;font-weight:300" id="iw-newsletter"></div>
         </div>
-        <div style="padding:22px 24px;font-size:14px;line-height:2;color:var(--ink);white-space:pre-wrap;font-weight:300" id="iw-newsletter"></div>
       </div>
 
       <div style="display:flex;gap:10px;align-items:center">
         <button class="btn-rose" onclick="saveUsedWord()">Mark as used this month</button>
-        <button class="btn-ghost" onclick="genIrishWord()">Try a different word</button>
-        <span id="iw-saved" style="font-size:12px;color:var(--sage);display:none">Word saved ✓</span>
+        <span id="iw-saved" style="font-size:12px;color:var(--sage);display:none">Saved ✓</span>
       </div>
 
     </div>
 
+    <!-- History -->
     <div id="iw-history-wrap" style="margin-top:40px;display:none">
       <div class="divider"></div>
       <div class="lbl" style="margin-bottom:16px">Word history</div>
@@ -1618,15 +1627,16 @@ if(!getKey()) showKeyModal();
 var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var currentIwWord = '';
 var currentIwData = null;
+var iwOptionsData = [];
 
 function getUsedWords(){ try{ return JSON.parse(localStorage.getItem('enibas_used_words')||'[]'); }catch(e){ return []; } }
-function setUsedWords(w){ localStorage.setItem('enibas_used_words',JSON.stringify(w)); }
+function setUsedWords(w){ localStorage.setItem('enibas_used_words', JSON.stringify(w)); }
 
 function renderUsedWords(){
   var words = getUsedWords();
   var el = document.getElementById('used-words'); if(!el) return;
   el.innerHTML = '';
-  words.forEach(function(w, i){
+  words.forEach(function(w,i){
     var tag = document.createElement('div'); tag.className = 'word-tag';
     tag.innerHTML = et(w) + '<button class="word-tag-del" onclick="removeUsedWord('+i+')">&#215;</button>';
     el.appendChild(tag);
@@ -1638,7 +1648,7 @@ function renderUsedWords(){
 
 function addUsedWord(){
   var inp = document.getElementById('add-used'); var v = inp.value.trim(); if(!v) return;
-  var w = getUsedWords(); w.push(v); setUsedWords(w); inp.value = ''; renderUsedWords();
+  var w = getUsedWords(); w.push(v); setUsedWords(w); inp.value=''; renderUsedWords();
 }
 
 function removeUsedWord(i){
@@ -1650,118 +1660,186 @@ function saveUsedWord(){
   var w = getUsedWords();
   if(!w.includes(currentIwWord)){
     w.push(currentIwWord);
-    var hist = [];
-    try{ hist = JSON.parse(localStorage.getItem('enibas_iw_history')||'[]'); }catch(e){}
+    var hist = []; try{ hist=JSON.parse(localStorage.getItem('enibas_iw_history')||'[]'); }catch(e){}
     if(currentIwData){
       var mIdx = parseInt(document.getElementById('iw-month').value)-1;
-      hist.push(Object.assign({}, currentIwData, {savedMonth: MONTH_NAMES[mIdx], savedDate: new Date().toISOString().split('T')[0]}));
+      hist.push(Object.assign({},currentIwData,{savedMonth:MONTH_NAMES[mIdx],savedDate:new Date().toISOString().split('T')[0]}));
       localStorage.setItem('enibas_iw_history', JSON.stringify(hist));
     }
     setUsedWords(w);
   }
   renderUsedWords();
-  var s = document.getElementById('iw-saved'); s.style.display='inline';
-  setTimeout(function(){s.style.display='none';},2500);
+  var s=document.getElementById('iw-saved'); if(s){s.style.display='inline'; setTimeout(function(){s.style.display='none';},2500);}
 }
 
 function renderWordHistory(){
-  var hist = [];
-  try{ hist = JSON.parse(localStorage.getItem('enibas_iw_history')||'[]'); }catch(e){}
-  var el = document.getElementById('iw-history'); if(!el) return;
-  el.innerHTML = '';
+  var hist=[]; try{ hist=JSON.parse(localStorage.getItem('enibas_iw_history')||'[]'); }catch(e){}
+  var el=document.getElementById('iw-history'); if(!el) return;
+  el.innerHTML='';
   hist.slice().reverse().forEach(function(item){
-    var d = document.createElement('div');
-    d.style.cssText = 'background:var(--ink);padding:20px;text-align:center;cursor:pointer';
-    d.innerHTML =
-      '<div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--mist);margin-bottom:8px">' + et(item.savedMonth||'') + '</div>' +
-      '<div style="font-family:var(--fh);font-size:28px;font-weight:300;color:var(--white);margin-bottom:4px">' + et(item.word||'') + '</div>' +
-      '<div style="font-family:var(--fh);font-size:14px;font-style:italic;color:var(--rose-l)">' + et(item.translation||'') + '</div>';
-    d.onclick = (function(it){ return function(){ renderIwResult(it); document.getElementById('iw-result').style.display='block'; }; })(item);
+    var d=document.createElement('div');
+    d.style.cssText='background:var(--ink);padding:20px;text-align:center;cursor:pointer';
+    d.innerHTML='<div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--mist);margin-bottom:8px">'+et(item.savedMonth||'')+'</div>'+
+      '<div style="font-family:var(--fh);font-size:28px;font-weight:300;color:var(--white);margin-bottom:4px">'+et(item.word||'')+'</div>'+
+      '<div style="font-family:var(--fh);font-size:14px;font-style:italic;color:var(--rose-l)">'+et(item.translation||'')+'</div>';
+    d.onclick=(function(it){return function(){ showHistoryItem(it); };})(item);
     el.appendChild(d);
   });
 }
 
-async function genIrishWord(){
-  if(!getKey()){ showKeyModal(); return; }
-  var mIdx = parseInt(document.getElementById('iw-month').value)-1;
-  var monthName = MONTH_NAMES[mIdx];
-  var theme = document.getElementById('iw-theme').value.trim();
-  var used = getUsedWords();
-  var btn = document.getElementById('iw-btn');
-  btn.disabled = true; btn.textContent = 'Finding word…';
-  document.getElementById('iw-result').style.display = 'none';
-
-  var prompt =
-    'You are an expert in the Irish language (Gaeilge) with deep knowledge of Irish culture, folklore, and the West Cork landscape. ACCURACY IS CRITICAL — only suggest words that genuinely exist in Irish, with correct spelling, pronunciation, and definition. If unsure, choose a different word.\n\n' +
-    'enibas is a fine jewellery brand founded in Schull, West Cork by Sabine Lenz. Each month they choose a beautiful Irish word for Sabine to illustrate and reflect on. The word is central to their Irish language content pillar and goes out to thousands of customers.\n\n' +
-    'MONTH: ' + monthName + '\n' +
-    (theme ? 'THEME / FEELING: ' + theme + '\n' : '') +
-    (used.length ? 'WORDS ALREADY USED — do not repeat any of these: ' + used.join(', ') + '\n' : '') +
-    '\nChoose one Irish word that:\n' +
-    '— Genuinely exists in Irish with a verifiable definition\n' +
-    '— Is beautiful in sound and on the page\n' +
-    '— Feels right for ' + monthName + ' — the season, light, landscape, emotional weather of Ireland\n' +
-    '— Has nuance that English cannot fully capture\n' +
-    '— Connects to: love, memory, belonging, gratitude, the land, quiet strength, home\n' +
-    '— Is NOT a cliché: never Craic, Sláinte, Grá, Céad Míle Fáilte\n\n' +
-    'NEWSLETTER TEMPLATE: The newsletter always follows this exact structure — fill in the blanks marked [WORD], [TRANSLATION], [DEFINITION_LINE]:\n' +
-    '"Each month, we choose an Irish word and bring it to Sabine, our founder and designer. She takes a quiet pause to reflect, letting the word settle in her heart. Then, with paintbrush in hand, she captures whatever rises — a memory, a feeling, a story — through illustration.\n\nThis month\'s Irish word:\n\n[WORD]\n[TRANSLATION]\n\n[DEFINITION_LINE]\n\n[SABINE\'S QUOTE — leave as placeholder text: \'Sabine\'s reflection will appear here\']\n\n— Sabine Lenz, designer & founder of enibas —\n\nHead over to Instagram to see the whole process."\n\n' +
-    'Respond ONLY with this exact JSON — no preamble, no markdown:\n' +
-    '{\n' +
-    '  "word": "the Irish word — correct spelling",\n' +
-    '  "translation": "the English translation — 1 to 4 words",\n' +
-    '  "pronunciation": "phonetic pronunciation in plain English e.g. (MWEE-an) — must be accurate",\n' +
-    '  "definition": "max 120 characters. Format: Core meaning in 3–5 words; one sentence of depth. e.g. Respect, reverence, honour; It speaks to an attitude of deep appreciation, whether toward people, traditions, the natural world, or moments of meaning.",\n' +
-    '  "seasonal": "3–4 sentences. Specific to ' + monthName + ' in Ireland — the quality of light, landscape, feel of the air, Irish life at this time. Make it feel like West Cork.",\n' +
-    '  "brand": "2–3 sentences on how this word lives in the enibas world and the lives of the women who wear the jewellery.",\n' +
-    '  "caption": "Instagram caption in the enibas voice. Line 1: just the Irish word. Line 2: pronunciation in brackets. Line 3: translation. Then 3–5 warm lines connecting to the season and the enibas world. One gentle CTA at the end. No hashtags.",\n' +
-    '  "newsletter": "The complete newsletter copy using the template above — fill in [WORD], [TRANSLATION], [DEFINITION_LINE] with the real values. Keep [Sabine\'s reflection will appear here] as literal placeholder text for Sabine to replace."\n' +
-    '}';
-
-  try {
-    var txt = await aiCall(prompt, false);
-    var clean = txt.replace(/```json|```/g,'').trim();
-    var data = JSON.parse(clean);
-    currentIwData = data;
-    currentIwWord = data.word;
-    renderIwResult(data);
-    document.getElementById('iw-month-label').textContent = monthName.toUpperCase() + ' · IRISH WORD OF THE MONTH';
-    document.getElementById('iw-result').style.display = 'block';
-    window.scrollTo({top: document.getElementById('iw-result').offsetTop - 80, behavior:'smooth'});
-  } catch(err){
-    alert('Error generating word: ' + err.message);
+function showHistoryItem(item){
+  currentIwData=item; currentIwWord=item.word||'';
+  renderIwCard(item);
+  document.getElementById('iw-month-label').textContent=(item.savedMonth||'').toUpperCase()+' · IRISH WORD OF THE MONTH';
+  document.getElementById('iw-options').style.display='none';
+  document.getElementById('iw-result').style.display='block';
+  if(item.caption||item.newsletter){
+    document.getElementById('iw-content-spin').style.display='none';
+    document.getElementById('iw-content-wrap').style.display='block';
+    document.getElementById('iw-caption').textContent=item.caption||'';
+    document.getElementById('iw-newsletter').textContent=item.newsletter||'';
   }
-  btn.disabled = false; btn.textContent = 'Generate';
+  window.scrollTo({top:document.getElementById('iw-result').offsetTop-80,behavior:'smooth'});
 }
 
-function renderIwResult(data){
-  var pronEl = document.getElementById('iw-pronunciation');
-  if(pronEl) pronEl.textContent = data.pronunciation || '';
-  document.getElementById('iw-word').textContent = data.word || '';
-  document.getElementById('iw-translation').textContent = data.translation || '';
-  document.getElementById('iw-definition').textContent = data.definition || '';
-  var def = (data.definition||'');
-  var cc = document.getElementById('iw-char-count');
-  if(cc) cc.textContent = def.length + ' / 120 chars' + (def.length > 120 ? ' ⚠ over limit' : '');
-  document.getElementById('iw-seasonal').textContent = data.seasonal || '';
-  document.getElementById('iw-brand').textContent = data.brand || '';
-  document.getElementById('iw-caption').textContent = data.caption || '';
-  document.getElementById('iw-newsletter').textContent = data.newsletter || '';
+function backToOptions(){
+  document.getElementById('iw-result').style.display='none';
+  document.getElementById('iw-options').style.display='block';
+  window.scrollTo({top:document.getElementById('iw-options').offsetTop-80,behavior:'smooth'});
+}
+
+// ── STEP 1: Generate 5 word options ──────────────────────────────────
+async function genIrishWords(){
+  if(!getKey()){ showKeyModal(); return; }
+  var mIdx=parseInt(document.getElementById('iw-month').value)-1;
+  var monthName=MONTH_NAMES[mIdx];
+  var theme=document.getElementById('iw-theme').value.trim();
+  var used=getUsedWords();
+  var btn=document.getElementById('iw-btn');
+  btn.disabled=true; btn.textContent='Finding words…';
+  document.getElementById('iw-options').style.display='none';
+  document.getElementById('iw-result').style.display='none';
+
+  var prompt=
+    'You are an expert in the Irish language (Gaeilge) with deep knowledge of Irish culture, folklore, and West Cork. ACCURACY IS CRITICAL — only suggest words that genuinely exist in Irish with correct spelling, pronunciation and definition. Do not invent or approximate.\n\n'+
+    'enibas is a fine jewellery brand from Schull, West Cork by Sabine Lenz. Each month they choose one beautiful Irish word for their Irish language content.\n\n'+
+    'MONTH: '+monthName+'\n'+
+    (theme?'THEME / FEELING: '+theme+'\n':'')+
+    (used.length?'WORDS ALREADY USED — do not repeat: '+used.join(', ')+'\n':'')+
+    '\nSuggest 5 different verified Irish words, each one:\n'+
+    '— Genuinely existing in Irish with a verifiable definition\n'+
+    '— Beautiful in sound and on the page\n'+
+    '— Emotionally resonant for '+monthName+'\n'+
+    '— Connected to: love, memory, belonging, gratitude, landscape, quiet strength, home\n'+
+    '— NOT a cliché: never Craic, Sláinte, Grá, Céad Míle Fáilte\n'+
+    '— Each word should be distinct in meaning and feel — give real variety\n\n'+
+    'Respond ONLY with this exact JSON — no preamble, no markdown:\n'+
+    '{"words":['+
+    '{"word":"Irish word","translation":"1–4 words","pronunciation":"phonetic e.g. (MWEE-an)","definition":"max 120 chars: Core meaning; one sentence of depth."},'+
+    '{"word":"Irish word","translation":"1–4 words","pronunciation":"phonetic","definition":"max 120 chars"},'+
+    '{"word":"Irish word","translation":"1–4 words","pronunciation":"phonetic","definition":"max 120 chars"},'+
+    '{"word":"Irish word","translation":"1–4 words","pronunciation":"phonetic","definition":"max 120 chars"},'+
+    '{"word":"Irish word","translation":"1–4 words","pronunciation":"phonetic","definition":"max 120 chars"}'+
+    ']}';
+
+  try{
+    var txt=await aiCall(prompt,false);
+    var clean=txt.replace(/```json|```/g,'').trim();
+    var data=JSON.parse(clean);
+    iwOptionsData=data.words||[];
+    renderWordOptions(iwOptionsData, monthName);
+  }catch(err){
+    alert('Error: '+err.message);
+  }
+  btn.disabled=false; btn.textContent='Generate';
+}
+
+function renderWordOptions(words, monthName){
+  var grid=document.getElementById('iw-options-grid'); if(!grid) return;
+  grid.innerHTML='';
+  words.forEach(function(w,i){
+    var card=document.createElement('div');
+    card.style.cssText='background:var(--white);border:1px solid var(--shore);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;cursor:pointer;transition:border-color .15s';
+    card.onmouseover=function(){this.style.borderColor='var(--rose)';};
+    card.onmouseout=function(){this.style.borderColor='var(--shore)';};
+    card.innerHTML=
+      '<div style="flex:1">'+
+        '<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px">'+
+          '<span style="font-family:var(--fh);font-size:28px;font-weight:300;color:var(--ink)">'+et(w.word)+'</span>'+
+          '<span style="font-size:11px;color:var(--mist);font-weight:300">'+et(w.pronunciation)+'</span>'+
+          '<span style="font-family:var(--fh);font-size:16px;font-style:italic;color:var(--rose-l)">'+et(w.translation)+'</span>'+
+        '</div>'+
+        '<div style="font-size:13px;color:var(--stone);line-height:1.7;font-weight:300">'+et(w.definition)+'</div>'+
+      '</div>'+
+      '<button class="btn-rose" style="flex-shrink:0;padding:10px 20px;font-size:9px">Choose this word</button>';
+    (function(word, month){ card.onclick=function(){ selectWord(word, month); }; })(w, monthName);
+    grid.appendChild(card);
+  });
+  document.getElementById('iw-options').style.display='block';
+  window.scrollTo({top:document.getElementById('iw-options').offsetTop-80,behavior:'smooth'});
+}
+
+// ── STEP 2: Generate full content for chosen word ─────────────────────
+async function selectWord(wordData, monthName){
+  if(!getKey()){ showKeyModal(); return; }
+  currentIwData=wordData; currentIwWord=wordData.word;
+  renderIwCard(wordData);
+  var mIdx=parseInt(document.getElementById('iw-month').value)-1;
+  document.getElementById('iw-month-label').textContent=MONTH_NAMES[mIdx].toUpperCase()+' · IRISH WORD OF THE MONTH';
+  document.getElementById('iw-options').style.display='none';
+  document.getElementById('iw-result').style.display='block';
+  document.getElementById('iw-content-wrap').style.display='none';
+  document.getElementById('iw-content-spin').style.display='block';
+  window.scrollTo({top:document.getElementById('iw-result').offsetTop-80,behavior:'smooth'});
+
+  var prompt=
+    'You are an expert copywriter for enibas jewellery (Schull, West Cork) with deep knowledge of the Irish language and culture. ACCURACY IS CRITICAL.\n\n'+
+    'IRISH WORD: '+wordData.word+'\n'+
+    'TRANSLATION: '+wordData.translation+'\n'+
+    'DEFINITION: '+wordData.definition+'\n'+
+    'MONTH: '+monthName+'\n\n'+
+    'enibas VOICE: Warm, intimate, quietly confident. Thoughtfully Irish — never clichéd. Emotion first. Like a letter from a wise friend.\n\n'+
+    'NEWSLETTER TEMPLATE (fill in the blanks — keep the structure exactly):\n'+
+    '"Each month, we choose an Irish word and bring it to Sabine, our founder and designer. She takes a quiet pause to reflect, letting the word settle in her heart. Then, with paintbrush in hand, she captures whatever rises — a memory, a feeling, a story — through illustration.\n\nThis month\'s Irish word:\n\n'+wordData.word+'\n'+wordData.translation+'\n\n'+wordData.definition+'\n\n[SABINE\'S REFLECTION — Sabine\'s own words will appear here]\n\n— Sabine Lenz, designer & founder of enibas —\n\nHead over to Instagram to see the whole process."\n\n'+
+    'Respond ONLY with this exact JSON — no preamble, no markdown:\n'+
+    '{"caption":"Instagram caption in the enibas voice. Line 1: just the Irish word. Line 2: pronunciation in brackets. Line 3: translation. Then 3–5 warm lines connecting to '+monthName+' and the enibas world. One gentle CTA. No hashtags.",'+
+    '"newsletter":"The complete newsletter copy using the template above exactly as written, with [SABINE\'S REFLECTION — Sabine\'s own words will appear here] kept as a literal placeholder."}';
+
+  try{
+    var txt=await aiCall(prompt,false);
+    var clean=txt.replace(/```json|```/g,'').trim();
+    var data=JSON.parse(clean);
+    currentIwData=Object.assign({},wordData,data);
+    document.getElementById('iw-caption').textContent=data.caption||'';
+    document.getElementById('iw-newsletter').textContent=data.newsletter||'';
+    document.getElementById('iw-content-spin').style.display='none';
+    document.getElementById('iw-content-wrap').style.display='block';
+  }catch(err){
+    document.getElementById('iw-content-spin').style.display='none';
+    alert('Error generating content: '+err.message);
+  }
+}
+
+function renderIwCard(data){
+  document.getElementById('iw-word').textContent=data.word||'';
+  document.getElementById('iw-pronunciation').textContent=data.pronunciation||'';
+  document.getElementById('iw-translation').textContent=data.translation||'';
+  document.getElementById('iw-definition').textContent=data.definition||'';
 }
 
 function cpIwCaption(){
-  var t = document.getElementById('iw-caption').textContent;
-  navigator.clipboard.writeText(t).then(function(){ alert('Caption copied!'); });
+  navigator.clipboard.writeText(document.getElementById('iw-caption').textContent)
+    .then(function(){ alert('Caption copied!'); });
 }
 
 function cpIwNewsletter(){
-  var t = document.getElementById('iw-newsletter').textContent;
-  navigator.clipboard.writeText(t).then(function(){ alert('Newsletter copied — paste into Klaviyo and replace Sabine\'s placeholder with her quote.'); });
+  navigator.clipboard.writeText(document.getElementById('iw-newsletter').textContent)
+    .then(function(){ alert('Newsletter copied — paste into Klaviyo and replace the placeholder with Sabine\'s quote.'); });
 }
 
 (function(){
-  var sel = document.getElementById('iw-month');
-  if(sel) sel.value = new Date().getMonth() + 1;
+  var sel=document.getElementById('iw-month');
+  if(sel) sel.value=new Date().getMonth()+1;
   renderUsedWords();
 })();
 
