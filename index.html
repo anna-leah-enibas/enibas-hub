@@ -554,6 +554,17 @@ input[type=date]:focus { border-color: var(--rose); }
       </div>
 
       <div class="gen-bar-col">
+        <span class="lbl">Strategic angle <span style="font-weight:300;letter-spacing:0;text-transform:none;font-size:10px">(optional)</span></span>
+        <div class="pills" id="angle-sg">
+          <button class="pill on" onclick="sAngle(this,'none')">None</button>
+          <button class="pill" onclick="sAngle(this,'family')">Family story</button>
+          <button class="pill" onclick="sAngle(this,'craft')">Origin &amp; craft</button>
+          <button class="pill" onclick="sAngle(this,'diaspora')">Diaspora</button>
+          <button class="pill" onclick="sAngle(this,'trust')">Customer moment</button>
+        </div>
+      </div>
+
+      <div class="gen-bar-col">
         <span class="lbl">Output</span>
         <div class="out-toggle">
           <button class="otab on" id="out-s" onclick="sOut(this,'social')">Caption</button>
@@ -743,6 +754,10 @@ input[type=date]:focus { border-color: var(--rose); }
           <div class="feedback-block">
             <div class="feedback-label fb-improve">To improve</div>
             <div class="feedback-text" id="fb-improve"></div>
+          </div>
+          <div class="feedback-block">
+            <div class="feedback-label" style="color:var(--teal)">Strategic fit — does this deepen the enibas moat?</div>
+            <div class="feedback-text" id="fb-strategy"></div>
           </div>
         </div>
       </div>
@@ -1202,7 +1217,9 @@ function saveLibrary(){
 // ═══════════════════════════════════════════════════════════════
 // GENERATOR PILLS
 // ═══════════════════════════════════════════════════════════════
-var cType='product', cPil='', cPer='all', cLen='medium', cOut='social';
+var cType='product', cPil='', cPer='all', cLen='medium', cOut='social', cAngle='none';
+
+function sAngle(btn,v){document.querySelectorAll('#angle-sg .pill').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');cAngle=v;}
 
 function renderTypePills(){
   var lib=getLib(); var sg=document.getElementById('type-sg'); if(!sg) return;
@@ -1323,13 +1340,11 @@ function buildSystemPrompt(){
   var pillars=lib.pillars||[];
   var personas=lib.personas||[];
 
-  // Find active pillar + persona
   var pillarObj=pillars[0]||{name:'',desc:''};
   pillars.forEach(function(p){if(p.key===cPil) pillarObj=p;});
   var personaObj=null;
   if(cPer!=='all') personas.forEach(function(p){if(p.key===cPer) personaObj=p;});
 
-  // Content type label
   var typeLabel=cType; var typeHint='';
   (lib.types||'').split('\n').forEach(function(line){
     var parts=line.split('|').map(function(x){return x.trim();});
@@ -1339,14 +1354,29 @@ function buildSystemPrompt(){
   if(cType==='bts'||cType==='craftsmanship-bts') typeHint=' Write first person as Sabine. Warm and real. End with a genuine question.';
   if(cType==='irish'||cType==='irish-language') typeHint=' Introduce the Irish word/phrase, its meaning, and its connection to the piece. Warm and educational. Note this uses a pink tile.';
 
-  // Caption length
   var lenMap={short:'1–3 lines. High impact. Often a phrase, quote or single emotional statement.',medium:'4–8 lines. Story or emotional hook. End with a soft CTA.',long:'9+ lines. Educational, personal story, or deeper brand reflection.'};
 
-  // Real examples
-  var caps=(lib.captions||[]).filter(Boolean);
-  var exampleBlock=caps.length>0?'\n\nREAL ENIBAS CAPTIONS TO LEARN FROM (mirror this voice exactly — these are approved, published posts):\n\n'+caps.map(function(c,i){return '--- EXAMPLE '+(i+1)+' ---\n'+c;}).join('\n\n'):'';
+  // Strategic angle context
+  var angleMap = {
+    'none': '',
+    'family': 'STRATEGIC ANGLE — FAMILY STORY:\nenibas was founded in 1998 by Sabine Lenz and her husband, who built it together over 30 years from a market stall in Schull. Anna-Leah, their daughter, is now taking on leadership of the business. This is a living family story. The handover is real and ongoing. This is one of the things competitors cannot manufacture — use it with warmth and honesty, not as a marketing device.',
+    'craft': 'STRATEGIC ANGLE — ORIGIN & CRAFT:\nThis is what competitors cannot replicate. Every piece is designed entirely in-house by Sabine and finished in the Schull workshop — polishing, sanding, soldering, assembly. Made-in-Ireland craft at an accessible fine jewellery price point is a genuine, hard-won achievement earned over 30 years. The workshop is real. The town is real. The family is real. Write with that quiet confidence.',
+    'diaspora': 'STRATEGIC ANGLE — DIASPORA:\nA significant and growing part of the enibas audience is Irish diaspora — in the US, UK, Australia, and beyond. For them, enibas carries something deeper than jewellery: connection to home, to the language, to who they are. Write with that understanding. The Irish language element is especially resonant for people who grew up with it or learned it through family. Do not assume the reader is in Ireland.',
+    'trust': 'STRATEGIC ANGLE — CUSTOMER MOMENT:\nEnibas customers share their most personal moments with us — grief, love, milestones, family stories. That emotional trust, built over 30 years, is the real moat. No competitor can manufacture it. Write in a way that honours the weight of those moments. Never glib. Never salesy. Hold space for the human experience first.'
+  };
 
-  var sys='You are a copywriter for enibas jewellery. You write exclusively in the enibas voice. Study the examples below and mirror the tone, rhythm, and warmth exactly.\n\n'
+  var caps=(lib.captions||[]).filter(Boolean);
+  var exampleBlock=caps.length>0?'\n\nREAL ENIBAS CAPTIONS — mirror this voice exactly:\n\n'+caps.map(function(c,i){return '--- EXAMPLE '+(i+1)+' ---\n'+c;}).join('\n\n'):'';
+
+  // Core strategy context — always present
+  var strategyCore = 'ENIBAS STRATEGY CONTEXT (always inform your writing with this):\n'+
+    'enibas wins by earning deep emotional trust from Irish and diaspora customers who buy to mark life\'s moments — because it offers 30 years of authentic Irish-made craft, Irish language sentiments as meaningful vessels, and staff who hold personal moments with grace.\n\n'+
+    'The Irish language sentiment is the product. The design is the vessel. The real moat is the emotional trust customers place in enibas — built over 30 years and impossible to manufacture.\n\n'+
+    'The competition (Fior, Cróia, Seodin, Chupi) is growing — so every piece of content must deepen what they cannot replicate: the origin, the craft, the family story, the accumulated trust. Never generic Irish jewellery brand content.\n\n'+
+    'Winning aspiration: a well-known, trusted Irish brand — known in Ireland and by the diaspora worldwide — for authenticity, meaning, quality and values.';
+
+  var sys='You are a copywriter for enibas jewellery. You write exclusively in the enibas voice and in service of its strategy.\n\n'
+    +strategyCore+'\n\n'
     +'BRAND VOICE:\n'+(lib.voice||'')+'\n\n'
     +'STYLE:\n'+(lib.style||'')+'\n\n'
     +(lib.extra?'ACCURACY RULES:\n'+lib.extra+'\n\n':'')
@@ -1354,6 +1384,7 @@ function buildSystemPrompt(){
     +(lib.wordsAvoid&&lib.wordsAvoid.length?'NEVER USE: '+lib.wordsAvoid.join(', ')+'\n\n':'')
     +'CONTENT PILLAR — '+pillarObj.name.toUpperCase()+':\n'+(pillarObj.desc||'')+'\n\n'
     +(personaObj?'TARGET PERSONA — '+personaObj.name.toUpperCase()+':\n'+(personaObj.desc||'')+'\n\n':'')
+    +(cAngle&&cAngle!=='none'&&angleMap[cAngle]?angleMap[cAngle]+'\n\n':'')
     +'CONTENT TYPE: '+typeLabel+'.'+typeHint+'\n\n'
     +exampleBlock;
 
@@ -1363,8 +1394,29 @@ function buildSystemPrompt(){
 function buildPrompts(prod, det){
   var ctx=buildSystemPrompt(); var lib=getLib();
   var base=ctx.sys+'\n\nTOPIC: '+prod+(det?'\nDETAILS: '+det:'')+'\n\n';
-  var socialP=base+'CAPTION RULES:\n'+(lib.social||'')+'\n\nTarget length: '+(ctx.lenMap[cLen]||'')+'\n\nWrite the Instagram caption now. Emotion first. Open with feeling, never the product name. No preamble — output only the caption:';
-  var nlP=base+'NEWSLETTER RULES:\n'+(lib.nl||'')+'\n\nUse these exact labels on their own lines:\nSUBJECT LINE:\nPREVIEW TEXT:\nOPENING:\nMAIN BODY:\nCTA BUTTON:\n\nWrite the newsletter now:';
+
+  var socialP=base
+    +'CAPTION RULES:\n'+(lib.social||'')+'\n\n'
+    +'Target length: '+(ctx.lenMap[cLen]||'')+'\n\n'
+    +'Write the Instagram caption now. Emotion first. Open with feeling, never the product name. '
+    +'The caption should feel like it could only come from enibas — not any Irish jewellery brand. '
+    +'No preamble — output only the caption:';
+
+  var diasporaNl = (cAngle==='diaspora') ?
+    'This newsletter will reach Irish diaspora customers — US, UK, Australia and beyond. '
+    +'They cannot walk into Schull or Kinsale. The newsletter is where the emotional relationship deepens. '
+    +'Write like a letter from a trusted friend who understands what Ireland means to someone living away from it. ' : '';
+
+  var nlP=base
+    +'NEWSLETTER RULES:\n'+(lib.nl||'')+'\n\n'
+    +diasporaNl
+    +'The newsletter is enibas\'s primary relationship-builder with the diaspora and the channel where emotional trust deepens most. '
+    +'Write with more warmth, more story, and more of the enibas origin than you would in a caption. '
+    +'The subject line should make the reader feel something — not describe the product.\n\n'
+    +'Use these exact labels on their own lines:\n'
+    +'SUBJECT LINE:\nPREVIEW TEXT:\nOPENING:\nMAIN BODY:\nCTA BUTTON:\n\n'
+    +'Write the newsletter now:';
+
   return {social:socialP, nl:nlP};
 }
 
@@ -1511,17 +1563,20 @@ async function runReview(){
   var caps=(lib.captions||[]).filter(Boolean);
   var exBlock=caps.length?'\n\nAPPROVED ENIBAS EXAMPLES (the target voice):\n\n'+caps.slice(0,3).map(function(c,i){return '--- '+( i+1)+' ---\n'+c;}).join('\n\n'):'';
 
-  var prompt='You are a senior brand editor for enibas jewellery. Assess the following copy against the enibas brand voice and guidelines.\n\n'
+  var prompt='You are a senior brand editor and strategist for enibas jewellery. Assess the following copy against both the enibas brand voice AND its strategy.\n\n'
     +'BRAND VOICE:\n'+(lib.voice||'')+'\n\n'
     +'STYLE:\n'+(lib.style||'')+'\n\n'
     +(lib.wordsAvoid&&lib.wordsAvoid.length?'WORDS TO NEVER USE: '+lib.wordsAvoid.join(', ')+'\n\n':'')
     +(lib.wordsLove&&lib.wordsLove.length?'WORDS WE LOVE: '+lib.wordsLove.join(', ')+'\n\n':'')
+    +'ENIBAS STRATEGY — THE MOAT:\n'
+    +'enibas wins through deep emotional trust built over 30 years — authentic Irish-made craft, Irish language as meaningful vessel, staff who hold personal moments with grace. The competition (Fior, Cróia, Seodin, Chupi) is growing. Content must deepen what they cannot replicate: the origin, the craft, the family story (Sabine + husband founding it, Anna-Leah taking it forward), the accumulated trust. The diaspora (US, UK, Australia) is the primary growth audience — the newsletter is where that relationship deepens.\n\n'
+    +'THE KEY STRATEGIC QUESTION FOR ANY PIECE OF COPY: Could this have been written by any Irish jewellery brand — or does it carry something only enibas can own?\n\n'
     +exBlock+'\n\n'
     +'COPY TO REVIEW:\n'+input+'\n\n'
     +(context?'CONTEXT: '+context+'\n\n':'')
     +(focus?'FOCUS AREAS: '+focus+'\n\n':'')
-    +'Respond ONLY with this exact JSON structure — no preamble, no markdown:\n'
-    +'{"score":7,"summary":"One sentence overall assessment","works":"What works well, specific","improve":"What to fix, specific, line by line where possible","openings":["Opening line option 1","Opening line option 2","Opening line option 3"],"rewrite":"Full rewrite in perfect enibas voice"}';
+    +'Respond ONLY with this exact JSON — no preamble, no markdown:\n'
+    +'{"score":7,"summary":"One sentence overall assessment","works":"What works well — be specific","improve":"What to fix — be specific, line by line where possible","strategy":"1–2 sentences: does this content deepen the enibas moat, or could any Irish jewellery brand have written it? What one thing would make it more distinctively enibas?","openings":["Opening line option 1","Opening line option 2","Opening line option 3"],"rewrite":"Full rewrite in perfect enibas voice that also serves the strategy"}';
 
   try{
     var txt=await aiCall(prompt,false);
@@ -1535,6 +1590,7 @@ async function runReview(){
     document.getElementById('score-summary').textContent=data.summary||'';
     document.getElementById('fb-works').textContent=data.works||'';
     document.getElementById('fb-improve').textContent=data.improve||'';
+    var fbStrat=document.getElementById('fb-strategy'); if(fbStrat) fbStrat.textContent=data.strategy||'';
     // openings
     var oo=document.getElementById('openings'); oo.innerHTML='';
     (data.openings||[]).forEach(function(line){
@@ -1721,6 +1777,7 @@ async function genIrishWords(){
 
   var prompt=
     'You are an expert in the Irish language (Gaeilge) with deep knowledge of Irish culture, folklore, and West Cork. ACCURACY IS CRITICAL — only suggest words that genuinely exist in Irish with correct spelling, pronunciation and definition. Do not invent or approximate.\n\n'+
+    'STRATEGIC CONTEXT: For enibas, the Irish language sentiment is the product — not an add-on. The design is the vessel. Choosing the right word each month is a strategic act: it deepens the emotional territory that competitors cannot manufacture. Choose words that feel like they belong to enibas\'s 30-year story, not words that any Irish brand could use.\n\n'+
     'enibas is a fine jewellery brand from Schull, West Cork by Sabine Lenz. Each month they choose one beautiful Irish word for their Irish language content.\n\n'+
     'MONTH: '+monthName+'\n'+
     (theme?'THEME / FEELING: '+theme+'\n':'')+
