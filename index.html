@@ -614,7 +614,9 @@ input[type=date]:focus { border-color: var(--rose); }
 
     <div class="field">
       <span class="lbl">Key details</span>
-      <textarea id="f-det" style="flex:1;min-height:148px" placeholder="Irish inscription + meaning, price, metal, collection name, the story behind it, who it's for, any occasion context. The more you give, the better the output."></textarea>
+      <textarea id="f-det" style="flex:1;min-height:100px" placeholder="Irish inscription + meaning, price, metal, collection name, who it's for, occasion context…"></textarea>
+      <span class="lbl" style="margin-top:12px">Story hook <span style="font-weight:300;letter-spacing:0;text-transform:none;font-size:11px">(the human moment that makes this distinctively enibas)</span></span>
+      <textarea id="f-hook" style="min-height:56px" placeholder="e.g. A daughter buying her mum's initial after she passed. A woman marking 10 years cancer-free. Sabine's first piece at Schull market…"></textarea>
     </div>
 
     <div class="gen-btn-col">
@@ -887,6 +889,25 @@ input[type=date]:focus { border-color: var(--rose); }
       <div class="card-grid" id="persona-cards"></div>
     </div>
 
+    <!-- Voices -->
+    <div class="lib-section">
+      <div class="lib-sec-hdr">Sabine's Voice</div>
+      <p class="lib-hint">Quotes and writing from Sabine herself — the AI uses this when writing BTS, craft, and origin content.</p>
+      <textarea id="bv-sabine" style="min-height:90px"></textarea>
+    </div>
+
+    <div class="lib-section">
+      <div class="lib-sec-hdr">Anna-Leah's Voice</div>
+      <p class="lib-hint">How Anna-Leah speaks about enibas — used when the next chapter angle is relevant.</p>
+      <textarea id="bv-al" style="min-height:60px"></textarea>
+    </div>
+
+    <div class="lib-section">
+      <div class="lib-sec-hdr">Customer Stories</div>
+      <p class="lib-hint">Real customer moments — the emotional territory enibas operates in. The AI writes towards this.</p>
+      <textarea id="bv-cs" style="min-height:90px"></textarea>
+    </div>
+
     <!-- Format rules -->
     <div class="lib-section">
       <div class="lib-sec-hdr">Format Rules</div>
@@ -1064,33 +1085,43 @@ function showTab(id,btn){
 // DEFAULTS
 // ═══════════════════════════════════════════════════════════════
 var DEFAULT_LIB = {
-  voice: 'Ageless and inclusive. Positive yet compassionate. Thoughtfully Irish — intelligent, never clichéd. Never gimmicky or salesy. Emotion first, detail second. Short sentences are powerful — use them. Write in second person. Use contractions naturally. Always write enibas in lowercase.',
-  style: 'Gentle, confident and conversational. We sell fine jewellery but our focus is everyday wear and real life — we talk like real people. No stiff or formal language. Joy and positivity always, even on complex topics. Tone analyser should score 90%+ for Joy/Positivity.',
-  extra: 'Always say \'designed and hand finished in our West Cork studio\' — never \'handmade\'. Use \'inscribed\' not \'etched\'. Capitalise \'Irish\' as an adjective. Never reference \'sterling silver\' — say solid gold or silver. Always write enibas in lowercase.',
-  social: 'Short (1–3 lines): high impact, visual-led, quote or phrase. Medium (4–8 lines): story or emotional hook with soft CTA. Long (9+ lines): educational, personal story, brand reflection. End with relevant hashtags. No acronyms. Pink tile for Irish language posts only.',
-  nl: 'Subject line: emotional, benefit-led, under 45 chars. Preview text under 85 chars. Opening: 2–3 warm personal sentences. Main body: 90–110 words. CTA button: max 5 words. Write like a letter to a loyal customer, not a mailing list.',
+  voice: 'Ageless and inclusive. Positive yet compassionate. Thoughtfully Irish — intelligent, never clichéd. Emotion first, detail second. Short sentences carry weight — use them. Second person always. Contractions naturally. The combination is the differentiator: authentic family craft + Sabine\'s design + made-in-Ireland quality + 30 years of emotional trust + Irish language as the meaningful thread. No single competitor has all of it. Every piece of copy should carry at least one element of that combination. Never generic Irish jewellery brand content — ask: could Fior, Cróia or Chupi have written this? If yes, rewrite it.',
+  style: 'Gentle, confident, conversational. Fine jewellery for real life. Talk like a real person. No stiff or formal language. Joy and warmth always — even on emotional topics. Aim for 90%+ Joy/Positivity in tone. The newsletter is enibas\'s primary relationship-builder — write it like a letter to someone who already loves the brand, not a marketing email. Subject lines should make the reader feel something, not describe a product.',
+  extra: 'Always say \'designed and hand finished in our West Cork studio\' — never \'handmade\'. Use \'inscribed\' not \'etched\'. Capitalise \'Irish\' as an adjective. Never reference \'sterling silver\' — say solid gold or silver. Always write enibas in lowercase, even to open a sentence. Hand stamped, not hand-stamped. Fada initials available. The workshop in Schull is real — you can watch through a glass window. Sabine designs everything in-house.',
+  social: 'Short (1–3 lines): high impact, visual-led, phrase or emotional statement. Medium (4–8 lines): story or emotional hook with soft CTA. Long (9+ lines): educational, personal story, brand reflection. First 125 characters are shown before "more" — make them count. End with relevant hashtags. No acronyms. Pink tile for Irish language posts only. Open with feeling or image — never with product name.',
+  nl: 'Subject line: emotional, benefit-led, under 45 chars — make the reader feel something before they open it. Preview text under 85 chars. Opening: 2–3 warm personal sentences that earn the read. Main body: 90–120 words. One CTA button, max 5 words. Write like a letter to a loyal customer who already knows and loves enibas. The newsletter is where the diaspora relationship deepens — more warmth, more story, more of the enibas origin than a caption. Promotional newsletters that have worked: Green Friday (values-led, not discount-led), seasonal moments.',
   types: 'Product feature | product\nEmotional connection | emotional\nCraftsmanship / BTS | bts\nIrish language | irish\nIrish landscape | landscape',
   captions: [
     "💚 We don't often have sales; our jewellery is made to hold its value. But once a year, on Green Friday, we do take part.\n\nIt will be a day for thoughtful, lasting gifts, made in Ireland, with love and care. We know that our enibas community looks forward to it, and it's a chance to make thoughtful giving a little easier.\n\nGreen Friday at enibas takes place Friday, 28th November. Those who sign up for early access will receive an exclusive code to shop quietly, before the rush.\n\nIf you'd like to be first to know, tap the link in our bio to join the early access list.\n\nBecause gifts chosen with intention are the ones that last a lifetime. 💚",
     "Wishing you a joyful start to the year ahead. We're deeply grateful for your support, your stories, and the many moments you've shared with us along the way.\n\nWe're also quietly counting down to something meaningful. Our Buíochas go deo ring will be launching soon — created as a timeless reminder to keep gratitude close, always.\n\nHere's to a year of kindness, connection, and beauty in the everyday. 💛",
-    "A love story, make it yours ✨\nHands for friendship, heart for love and crowned with an arc of five sparkling diamonds.\n\nOur Claddagh and Half Moon stacking rings are rooted in Irish tradition, and shaped for modern lives.\n\nCelebrate love and connection: to yourself, to your people, to the moments that matter most.\n\nWorn your way. Loved every day.\n\n#enibas #CladdaghRing #IrishDesign #DiamondCrown #ModernHeirloom"
+    "A love story, make it yours ✨\nHands for friendship, heart for love and crowned with an arc of five sparkling diamonds.\n\nOur Claddagh and Half Moon stacking rings are rooted in Irish tradition, and shaped for modern lives.\n\nCelebrate love and connection: to yourself, to your people, to the moments that matter most.\n\nWorn your way. Loved every day.\n\n#enibas #CladdaghRing #IrishDesign #DiamondCrown #ModernHeirloom",
+    "Jewellery made with meaning 💛\nLove takes many forms.\nThis Valentine's Day, we're celebrating the quiet kind, the everyday kind, the kind that stays.\n\n— Buíochas go deo: A daily reminder to be grateful for the love we have.\n— Croí álainn: Two beautiful hearts, closely connected.\n— Anam: Add their initial. Add yours. Carry them close, always.\n— Diamond pendant: For love that lasts — simple, strong, timeless.\n\nPieces to gift, to keep, to mark a moment, or just to say I see you, I love you, I'm grateful. ✨",
+    "At enibas, every piece begins with a feeling.\nWarmth, belonging, and a connection that travels across miles and moments.\n\nThis Christmas, choose a gift that carries that feeling with it.\nSomething thoughtfully chosen, made by hand in West Cork, crafted to be worn close.\n\nA piece that becomes part of their story.\nA reminder of love, of home, of you — always. ✨",
+    "A symbol of gratitude.\nSay 'thank you' with a Buíochas go deo piece.\n\nWhether it's for a friend who's always there, a mentor who's guided your way, or someone whose kindness made a difference — this piece says what words sometimes can't: thank you, forever.",
+    "🍂 As Samhain arrives, the road ahead feels quieter, giving us time to pause between what was and what's to come.\n\nThis ancient Irish festival marks a turning point of the year, when we honour the past and step gently into winter.\n\nHere's to slower days, steady steps, and the season ahead. 🍂",
+    "💚 When you choose something made in Ireland, you're choosing more than a gift — you're choosing connection, craft, and values that last.\n\nEvery enibas piece begins in our small workshop by the sea in West Cork. With a close-knit local team, each piece is designed and finished by hand.\n\nIn a world where it's becoming harder to find things truly made in Ireland, we're proud to keep our making here, supporting local jobs, Irish craft, and our community. 🇮🇪"
   ],
-  newsletters: [],
+  newsletters: [
+    "SUBJECT: Carried with you, always.\n\nAnam Initial pendants are more than jewellery — they're gentle reminders of the people who shape your world. The ones who lift you, who know you, who bring comfort just by being there. Their initial, close to your heart, is a quiet way of saying: you matter.\n\nWear one, or up to five together. These are pieces to treasure — not just for how they look, but for who they honour.\n\nWhether it's for your child, your partner, your best friend — or your own initial, every pendant holds a story.\n\nBuild your own Anam pendant"
+  ],
   wordsLove: ['Acknowledge','Affirmation','Beloved','Care','Carry','Celebrate','Cherish','Connection','Deep','Deserve','Effortless','Everyday','Gentle','Graceful','Heart','Heartfelt','Honour','Hold','Inscribed','Inspired','Life','Meaningful','Memory','Natural','Personal','Poignant','Power','Precious','Real','Reflection','Relationship','Reminder','Share','Simple','Soul','Spirit','Story','Symbol','Thoughtful','True','Trust','Warmth','West Cork','Wild'],
-  wordsAvoid: ['Elegant','Styling','Wonderful','Gorgeous','Talisman','Statement','Etched','Unique','Sterling','handmade','Timeless','Bespoke','Journey (overused)','Tapestry','em dashes'],
+  wordsAvoid: ['Elegant','Styling','Wonderful','Gorgeous','Talisman','Statement','Etched','Unique','Sterling','handmade','Timeless','Bespoke','Journey (overused)','Tapestry','Luxurious','Exquisite'],
+  sabineVoice: "I was inspired by the shapes of seeds when designing our Buíoch anois collection — each one a symbol of life's journey. Just like seeds that need to endure darkness and soil to bloom, we too face challenges that shape who we are. For me, it's about embracing gratitude in both the beautiful moments and the difficult ones — because both are equally part of our story.\n\nI'm endlessly fascinated by the Irish language — how it can express such colour and nuance of emotion. While life can be so fragile, jewellery is permanent. It embodies the resilience we all have inside us. Hearing your stories gives new meaning to every single piece.\n\nGrowth comes from overcoming challenges. Gratitude means embracing both the beautiful moments and the difficult ones. Life is a balance of light and dark — but with gratitude, we grow.",
+  annaLeahVoice: "I grew up with enibas — at the kitchen table, in the workshop, at markets. Now, I feel lucky to carry that connection forward alongside my mum, and into a new chapter.",
+  customerStories: "I bought it for myself after my mother died. I like the sense that she is still with me lighting my way. My mother was Irish so the wording is perfect.\n\nMy Anam has the initials of my 3 beautiful babies. I added the star jewel to remember my first baby I lost to a miscarriage — to keep his/her memory close to my heart.\n\nThe gold is perfect for a graduation present for my granddaughter. She is precious and is in her second chapter on her journey in life. The fact the ring was custom made in Cork has a special meaning.\n\nDo shaol, do thuras — engraved on the disc bracelet I wear every single day without fail.\n\nEvery enibas piece that I wear has a special place in my heart.",
   pillars: [
-    {key:'irish-core', name:'Irish Core', colour:'#7A9898', desc:'Deep connection to the land — wildness, textures, nature, weather as presence. Warm people, quiet strength, Irish resilience. Language, folklore, mythology. Nostalgia of everyday Irish moments. Thoughtfully Irish: liberal, progressive, intelligent — never clichéd.'},
-    {key:'emotional', name:'Emotional Connection', colour:'#AF7281', desc:'Realness — authentic, unposed moments. Both small daily rituals and major milestones. Touch and sound as part of emotional resonance. Imperfection and organic shapes. Gratitude as a core throughline — jewellery as physical expression of gratitude.'},
-    {key:'product', name:'Product', colour:'#C09E86', desc:'Still life and model shots. Begin with the official description, then expand on the emotion and occasion. Make them feel something. Help them identify with the piece. Never lead with product name first.'},
-    {key:'craftsmanship', name:'Craftsmanship / BTS', colour:'#8FA68E', desc:'Workshop footage, making-of content, process shots. Sabine and team as real people. More casual — builds intimacy. Don\'t over-craft — must feel natural and real. Voice and tone still apply.'},
-    {key:'irish-language', name:'Irish Language', colour:'#9E8E82', desc:'Introduce the word/phrase, its meaning, and connection to a piece or collection. Warm, educational, never academic. Pink tile. Always capitalise Irish.'}
+    {key:'irish-core', name:'Irish Core', colour:'#7A9898', desc:'Deep connection to the land — wildness, textures, nature, weather as presence. Warm people, quiet strength, Irish resilience. Language, folklore, mythology. Everyday Irish moments — making tea, a pub with friends, a walk in the rain. Thoughtfully Irish: liberal, progressive, intelligent — never clichéd or stage-Irish.'},
+    {key:'emotional', name:'Emotional Connection', colour:'#AF7281', desc:'Realness — authentic, unposed moments. Both small daily rituals and major milestones. Gratitude as a core throughline — jewellery as physical expression of gratitude for people, moments, life. Customers share grief, love, family stories with enibas. Hold space for that.'},
+    {key:'product', name:'Product', colour:'#C09E86', desc:'Begin with feeling or occasion — never lead with product name. Expand on emotion and who it is for. Make them feel something. Help them identify. The combination: Sabine\'s design + made in West Cork + Irish language sentiment. One metal mention maximum.'},
+    {key:'craftsmanship', name:'Craftsmanship / BTS', colour:'#8FA68E', desc:'Workshop in Schull — you can watch through the glass window. Sabine designs everything in-house. All finishing — polishing, sanding, soldering, assembly — done in West Cork. The family story: Sabine and her husband founded it, Anna-Leah is taking it forward. Warm and real — build intimacy without over-crafting.'},
+    {key:'irish-language', name:'Irish Language', colour:'#9E8E82', desc:'The Irish language sentiment is the product — the design is the vessel. Introduce the word/phrase, its meaning, and its connection. Warm, educational, never academic. The language space is crowded — emphasise that enibas has been here for 30 years, this is in the DNA, not a trend.'}
   ],
   personas: [
-    {key:'self-gifter', name:'Self Gifter', desc:'She marks her own achievements and life stages. Empowered, self-aware, sees jewellery as affirmation of self. Key messages: self-celebration, earned rewards, personal milestones, empowerment.'},
-    {key:'family-lover', name:'Family Lover', desc:'She uses jewellery to carry loved ones with her. Deep emotional connection to family across generations. Key messages: connection, family legacy, generational pieces, togetherness.'},
-    {key:'occasion-giver', name:'Occasion Giver', desc:'She buys for others — birthdays, graduations, bereavements, new beginnings. Values meaning over trend. Key messages: gifting, meaningful gesture, Irish language significance, right piece for the moment.'},
-    {key:'ireland-lover', name:'Ireland Lover', desc:'Deep affinity with Ireland — Irish-born, diaspora, or lover of the culture. Drawn to authenticity and specificity of place. Key messages: Irish heritage, West Cork, landscape, language, belonging.'},
-    {key:'next-genner', name:'Next Genner', desc:'A younger customer entering adulthood. Often receives enibas as a gift for a life transition. Open to building her own relationship with the brand. Key messages: new beginnings, life journey, rites of passage, modern Irish identity.'}
+    {key:'self-gifter', name:'Self Gifter', desc:'Marks her own achievements and life stages. Empowered, self-aware, sees jewellery as affirmation of self. "Do shaol, do thuras — sent me off to Uni." Self-celebration, earned rewards, personal milestones.'},
+    {key:'family-lover', name:'Family Lover', desc:'Uses jewellery to carry loved ones with her. "My family is always with me, just here on my pendants." Deep generational connection. Togetherness across distance.'},
+    {key:'occasion-giver', name:'Occasion Giver', desc:'Buys for others — birthdays, graduations, bereavements, new beginnings. Values meaning over trend. "I often choose pieces with an Irish inscription that best suits the occasion." The right piece for the moment.'},
+    {key:'ireland-lover', name:'Ireland Lover', desc:'Deep affinity with Ireland — Irish-born, diaspora, or lover of the culture. "The delicate inscribed designs really speak of Ireland and its heritage." Irish heritage, West Cork, landscape, language, belonging. Many live outside Ireland — enibas connects them to home.'},
+    {key:'next-genner', name:'Next Genner', desc:'Younger customer entering adulthood. Often receives enibas as a gift for a life transition. New beginnings, life journey, modern Irish identity.'}
   ]
 };
 
@@ -1180,6 +1211,9 @@ function addPersona(){ mutLib(function(lib){lib.personas.push({key:'persona-'+Da
 function loadLibToUI(){
   var lib=getLib();
   ['voice','style','extra','social','nl'].forEach(function(k){ var el=document.getElementById('bv-'+k); if(el&&lib[k]) el.value=lib[k]; });
+  var sv=document.getElementById('bv-sabine'); if(sv&&lib.sabineVoice) sv.value=lib.sabineVoice;
+  var av=document.getElementById('bv-al'); if(av&&lib.annaLeahVoice) av.value=lib.annaLeahVoice;
+  var cv=document.getElementById('bv-cs'); if(cv&&lib.customerStories) cv.value=lib.customerStories;
   var bt=document.getElementById('bv-types'); if(bt&&lib.types) bt.value=lib.types;
   renderExamples('captions'); renderExamples('newsletters');
   renderWords(); renderPillarCards(); renderPersonaCards();
@@ -1189,6 +1223,9 @@ function loadLibToUI(){
 function saveLibrary(){
   var lib=getLib();
   lib.voice  = document.getElementById('bv-voice').value;
+  var svEl=document.getElementById('bv-sabine'); if(svEl) lib.sabineVoice=svEl.value;
+  var avEl=document.getElementById('bv-al'); if(avEl) lib.annaLeahVoice=avEl.value;
+  var cvEl=document.getElementById('bv-cs'); if(cvEl) lib.customerStories=cvEl.value;
   lib.style  = document.getElementById('bv-style').value;
   lib.extra  = document.getElementById('bv-extra').value;
   lib.social = document.getElementById('bv-social').value;
@@ -1349,70 +1386,98 @@ function buildSystemPrompt(){
   (lib.types||'').split('\n').forEach(function(line){
     var parts=line.split('|').map(function(x){return x.trim();});
     var key=parts[1]||parts[0].toLowerCase().replace(/\s+/g,'-');
-    if(key===cType){ typeLabel=parts[0]; }
+    if(key===cType) typeLabel=parts[0];
   });
   if(cType==='bts'||cType==='craftsmanship-bts') typeHint=' Write first person as Sabine. Warm and real. End with a genuine question.';
-  if(cType==='irish'||cType==='irish-language') typeHint=' Introduce the Irish word/phrase, its meaning, and its connection to the piece. Warm and educational. Note this uses a pink tile.';
+  if(cType==='irish'||cType==='irish-language') typeHint=' Introduce the Irish word/phrase, its meaning, and connection to a piece. Warm, educational, never academic.';
 
-  var lenMap={short:'1–3 lines. High impact. Often a phrase, quote or single emotional statement.',medium:'4–8 lines. Story or emotional hook. End with a soft CTA.',long:'9+ lines. Educational, personal story, or deeper brand reflection.'};
-
-  // Strategic angle context
-  var angleMap = {
-    'none': '',
-    'family': 'STRATEGIC ANGLE — FAMILY STORY:\nenibas was founded in 1998 by Sabine Lenz and her husband, who built it together over 30 years from a market stall in Schull. Anna-Leah, their daughter, is now taking on leadership of the business. This is a living family story. The handover is real and ongoing. This is one of the things competitors cannot manufacture — use it with warmth and honesty, not as a marketing device.',
-    'craft': 'STRATEGIC ANGLE — ORIGIN & CRAFT:\nThis is what competitors cannot replicate. Every piece is designed entirely in-house by Sabine and finished in the Schull workshop — polishing, sanding, soldering, assembly. Made-in-Ireland craft at an accessible fine jewellery price point is a genuine, hard-won achievement earned over 30 years. The workshop is real. The town is real. The family is real. Write with that quiet confidence.',
-    'diaspora': 'STRATEGIC ANGLE — DIASPORA:\nA significant and growing part of the enibas audience is Irish diaspora — in the US, UK, Australia, and beyond. For them, enibas carries something deeper than jewellery: connection to home, to the language, to who they are. Write with that understanding. The Irish language element is especially resonant for people who grew up with it or learned it through family. Do not assume the reader is in Ireland.',
-    'trust': 'STRATEGIC ANGLE — CUSTOMER MOMENT:\nEnibas customers share their most personal moments with us — grief, love, milestones, family stories. That emotional trust, built over 30 years, is the real moat. No competitor can manufacture it. Write in a way that honours the weight of those moments. Never glib. Never salesy. Hold space for the human experience first.'
+  var lenMap={
+    short:'1–3 lines. High impact. A phrase, quote or single emotional statement. First 125 chars must hook without "more".',
+    medium:'4–8 lines. Story or emotional hook. End with a soft CTA.',
+    long:'9+ lines. Educational, personal story, or deeper brand reflection. Use sparingly.'
   };
 
+  // Strategic angle
+  var angleMap={
+    'none':'',
+    'family':'STRATEGIC ANGLE — THE FAMILY STORY (use with warmth, not as marketing device):\nenibas was founded by Sabine Lenz and her husband over 30 years ago — from a market stall in Schull. Anna-Leah, their daughter, grew up with enibas at the kitchen table, in the workshop, at markets. She is now taking the business forward alongside her mum. This is a living, ongoing story. No competitor can manufacture 30 years of a real family building something they love in a small town by the sea.',
+    'craft':'STRATEGIC ANGLE — ORIGIN & CRAFT (the hard-won achievement):\nEvery piece is designed entirely in-house by Sabine. All finishing — polishing, sanding, soldering, assembly — is done in the Schull workshop. You can watch through a glass window. A trusted German casting partner makes Irish-made craft viable at accessible fine jewellery price points — a genuine achievement earned over 30 years. The workshop is real. The town is real. The family is real. Write with quiet pride, not marketing language.',
+    'diaspora':'STRATEGIC ANGLE — DIASPORA:\nA significant part of the enibas audience is Irish diaspora — US, UK, Australia and beyond. For them enibas carries something deeper than jewellery: connection to home, to the language, to who they are. Many live far from Ireland — enibas connects them. The Irish language element is especially resonant for people who grew up with it or received it through family. Do not assume the reader is in Ireland.',
+    'trust':'STRATEGIC ANGLE — EMOTIONAL TRUST (the real moat):\nEnibas customers share their most personal moments with us. A daughter buying her mum\'s initial after she passed. A woman adding a star charm to remember a baby lost to miscarriage. A grandmother marking a granddaughter\'s second chapter. That emotional trust — built over 30 years — is what no competitor can replicate. Write in a way that honours the weight of those moments. Never glib. Hold space for the human experience first.'
+  };
+
+  // Real caption examples
   var caps=(lib.captions||[]).filter(Boolean);
-  var exampleBlock=caps.length>0?'\n\nREAL ENIBAS CAPTIONS — mirror this voice exactly:\n\n'+caps.map(function(c,i){return '--- EXAMPLE '+(i+1)+' ---\n'+c;}).join('\n\n'):'';
+  var exBlock=caps.length?'\n\nREAL PUBLISHED enibas CAPTIONS — study and mirror this voice exactly:\n\n'
+    +caps.slice(0,6).map(function(c,i){return '--- EXAMPLE '+(i+1)+' ---\n'+c;}).join('\n\n'):'';
 
-  // Core strategy context — always present
-  var strategyCore = 'ENIBAS STRATEGY CONTEXT (always inform your writing with this):\n'+
-    'enibas wins by earning deep emotional trust from Irish and diaspora customers who buy to mark life\'s moments — because it offers 30 years of authentic Irish-made craft, Irish language sentiments as meaningful vessels, and staff who hold personal moments with grace.\n\n'+
-    'The Irish language sentiment is the product. The design is the vessel. The real moat is the emotional trust customers place in enibas — built over 30 years and impossible to manufacture.\n\n'+
-    'The competition (Fior, Cróia, Seodin, Chupi) is growing — so every piece of content must deepen what they cannot replicate: the origin, the craft, the family story, the accumulated trust. Never generic Irish jewellery brand content.\n\n'+
-    'Winning aspiration: a well-known, trusted Irish brand — known in Ireland and by the diaspora worldwide — for authenticity, meaning, quality and values.';
+  // Newsletter examples
+  var nls=(lib.newsletters||[]).filter(Boolean);
+  var nlBlock=nls.length?'\n\nREAL enibas NEWSLETTER COPY — this is the voice and structure that works:\n\n'
+    +nls.map(function(n,i){return '--- NEWSLETTER EXAMPLE '+(i+1)+' ---\n'+n;}).join('\n\n'):'';
 
-  var sys='You are a copywriter for enibas jewellery. You write exclusively in the enibas voice and in service of its strategy.\n\n'
-    +strategyCore+'\n\n'
+  // Sabine's voice
+  var sabineBlock=lib.sabineVoice?'\n\nSABINE\'S OWN VOICE (when writing BTS or craft content, channel this):\n'+lib.sabineVoice:'';
+
+  // Anna-Leah's voice
+  var alBlock=lib.annaLeahVoice?'\n\nANNA-LEAH\'S VOICE (the next chapter, carrying it forward):\n'+lib.annaLeahVoice:'';
+
+  // Customer stories
+  var csBlock=lib.customerStories?'\n\nREAL CUSTOMER STORIES (the emotional territory enibas operates in — write towards this):\n'+lib.customerStories:'';
+
+  var strategy=
+    'THE enibas STRATEGY — every piece of copy should serve this:\n\n'+
+    'WINNING COMBINATION: enibas is the only Irish jewellery brand where authentic family craft, Sabine\'s design, made-in-Ireland quality, and 30 years of emotional trust come together — with Irish language sentiment as the meaningful thread. No single competitor (Fior, Cróia, Seodin, Chupi) has all of it. Every piece of copy must carry at least one element of that combination.\n\n'+
+    'THE MOAT: The emotional trust customers place in enibas — built over 30 years — is impossible to manufacture. Customers share their most personal moments with us. That is what we protect and deepen through content.\n\n'+
+    'THE FILTER: Ask of every line — could any Irish jewellery brand have written this? If yes, rewrite it until only enibas could have.\n\n'+
+    'THE NEWSLETTER TRUTH: The newsletter is the primary relationship-builder with the diaspora. It is where emotional trust deepens most. Write it like a letter, not a marketing email.\n\n'+
+    'WHAT enibas IS NOT: Not aspirational luxury. Not trend-led. Not clichéd-Irish (no shamrocks, no stage-Irish). Not preachy about sustainability. Not exclusive or unattainable.';
+
+  var sys=
+    'You are the copywriter for enibas jewellery. You write exclusively in the enibas voice and in service of the enibas strategy. Study everything below and let it shape every word you write.\n\n'
+    +strategy+'\n\n'
     +'BRAND VOICE:\n'+(lib.voice||'')+'\n\n'
     +'STYLE:\n'+(lib.style||'')+'\n\n'
     +(lib.extra?'ACCURACY RULES:\n'+lib.extra+'\n\n':'')
     +(lib.wordsLove&&lib.wordsLove.length?'WORDS WE LOVE — use freely: '+lib.wordsLove.join(', ')+'\n\n':'')
-    +(lib.wordsAvoid&&lib.wordsAvoid.length?'NEVER USE: '+lib.wordsAvoid.join(', ')+'\n\n':'')
+    +(lib.wordsAvoid&&lib.wordsAvoid.length?'NEVER USE THESE WORDS: '+lib.wordsAvoid.join(', ')+'\n\n':'')
     +'CONTENT PILLAR — '+pillarObj.name.toUpperCase()+':\n'+(pillarObj.desc||'')+'\n\n'
     +(personaObj?'TARGET PERSONA — '+personaObj.name.toUpperCase()+':\n'+(personaObj.desc||'')+'\n\n':'')
     +(cAngle&&cAngle!=='none'&&angleMap[cAngle]?angleMap[cAngle]+'\n\n':'')
-    +'CONTENT TYPE: '+typeLabel+'.'+typeHint+'\n\n'
-    +exampleBlock;
+    +'CONTENT TYPE: '+typeLabel+'.'+typeHint
+    +exBlock+sabineBlock+alBlock+csBlock+nlBlock;
 
   return {sys:sys, pillarObj:pillarObj, personaObj:personaObj, lenMap:lenMap};
 }
 
 function buildPrompts(prod, det){
   var ctx=buildSystemPrompt(); var lib=getLib();
-  var base=ctx.sys+'\n\nTOPIC: '+prod+(det?'\nDETAILS: '+det:'')+'\n\n';
+  var hook=document.getElementById('f-hook')?document.getElementById('f-hook').value.trim():'';
+
+  var topicBlock='TOPIC: '+prod+(det?'\nDETAILS: '+det:'')+(hook?'\n\nSTORY HOOK — the human moment that makes this distinctively enibas (use this to open with feeling, not product):\n'+hook:'')+'\n\n';
+
+  var base=ctx.sys+'\n\n'+topicBlock;
 
   var socialP=base
     +'CAPTION RULES:\n'+(lib.social||'')+'\n\n'
     +'Target length: '+(ctx.lenMap[cLen]||'')+'\n\n'
-    +'Write the Instagram caption now. Emotion first. Open with feeling, never the product name. '
-    +'The caption should feel like it could only come from enibas — not any Irish jewellery brand. '
-    +'No preamble — output only the caption:';
+    +'CRITICAL: The opening line is everything. It must stop the scroll. Start with the human feeling, the moment, the story hook — never with the product name, never with enibas. The first 125 characters are shown before the reader clicks more — make them matter.\n\n'
+    +'Run the filter before finishing: could Fior, Cróia or any competitor have written this? If yes, rewrite the opening.\n\n'
+    +'Output only the caption — no preamble, no explanation:';
 
-  var diasporaNl = (cAngle==='diaspora') ?
-    'This newsletter will reach Irish diaspora customers — US, UK, Australia and beyond. '
-    +'They cannot walk into Schull or Kinsale. The newsletter is where the emotional relationship deepens. '
-    +'Write like a letter from a trusted friend who understands what Ireland means to someone living away from it. ' : '';
+  var diasporaNl=(cAngle==='diaspora')?
+    'NOTE: This newsletter will reach Irish diaspora customers — US, UK, Australia and beyond. They cannot walk into Schull or Kinsale. For them enibas carries connection to home, to the language, to who they are. Write like a letter from someone who understands what Ireland means to a person living away from it.\n\n':'';
 
   var nlP=base
     +'NEWSLETTER RULES:\n'+(lib.nl||'')+'\n\n'
     +diasporaNl
-    +'The newsletter is enibas\'s primary relationship-builder with the diaspora and the channel where emotional trust deepens most. '
-    +'Write with more warmth, more story, and more of the enibas origin than you would in a caption. '
-    +'The subject line should make the reader feel something — not describe the product.\n\n'
+    +'THE NEWSLETTER BRIEF:\n'
+    +'— Subject line: make the reader feel something before they open it. Not a product description. Under 45 characters.\n'
+    +'— Preview text: extends the subject line feeling. Under 85 characters.\n'
+    +'— Opening: 2–3 sentences that earn the read. Warm, personal, specific. Not a generic greeting.\n'
+    +'— Main body: 90–120 words. Carry the story or the feeling. Include the piece naturally — it serves the emotion, not the other way around.\n'
+    +'— CTA: max 5 words. Active. Not generic ("Shop now" is weak — be specific).\n\n'
+    +'Run the filter: would a loyal enibas customer read this and feel something they couldn\'t get from any other Irish jewellery brand? If not, rewrite.\n\n'
     +'Use these exact labels on their own lines:\n'
     +'SUBJECT LINE:\nPREVIEW TEXT:\nOPENING:\nMAIN BODY:\nCTA BUTTON:\n\n'
     +'Write the newsletter now:';
@@ -1563,7 +1628,7 @@ async function runReview(){
   var caps=(lib.captions||[]).filter(Boolean);
   var exBlock=caps.length?'\n\nAPPROVED ENIBAS EXAMPLES (the target voice):\n\n'+caps.slice(0,3).map(function(c,i){return '--- '+( i+1)+' ---\n'+c;}).join('\n\n'):'';
 
-  var prompt='You are a senior brand editor and strategist for enibas jewellery. Assess the following copy against both the enibas brand voice AND its strategy.\n\n'
+  var prompt='You are the senior brand editor for enibas jewellery. You know the strategy deeply. Your job is to make the copy work — not just flag what is wrong, but show exactly how to fix it.\n\n'
     +'BRAND VOICE:\n'+(lib.voice||'')+'\n\n'
     +'STYLE:\n'+(lib.style||'')+'\n\n'
     +(lib.wordsAvoid&&lib.wordsAvoid.length?'WORDS TO NEVER USE: '+lib.wordsAvoid.join(', ')+'\n\n':'')
